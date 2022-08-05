@@ -32,6 +32,8 @@ func (ch *CountryHandler) SaveCountry(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, savedCountry)
+	savedCountry.Status = http.StatusCreated
+
+	c.JSON(savedCountry.Status, savedCountry)
 
 }

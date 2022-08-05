@@ -22,14 +22,14 @@ func init() {
 
 func main() {
 
-	//Wire repos
+	//repos
 	repos, err := persistence.NewRepositories()
 
-	// Gettting services
+	// services
 	countryService := country.NewCountryService(repos.CountryRepo)
 	productService := product.NewProductService(repos.ProductRepo)
 
-	//Getting handlers
+	// handlers
 	countryHandler := handlers.NewCountryHandler(countryService)
 	productHandler := handlers.NewProductHandler(productService)
 

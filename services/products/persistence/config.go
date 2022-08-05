@@ -46,5 +46,5 @@ func (r *Repositories) CloseDB() error {
 }
 
 func (r *Repositories) AutoMigrateDB() error {
-	return r.db.AutoMigrate(&domain.Country{}).AutoMigrate(&domain.Product{}).Error
+	return r.db.AutoMigrate(&domain.Country{}, &domain.Product{}, &domain.Stock{}).Error
 }

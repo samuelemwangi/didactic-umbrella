@@ -3,7 +3,7 @@ package product
 import "github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 
 type ProductResponseDTO struct {
-	ID   uint64 `json:"id"`
+	ID   uint   `json:"id"`
 	SKU  string `json:"sku"`
 	Name string `json:"productName"`
 }

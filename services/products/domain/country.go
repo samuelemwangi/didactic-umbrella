@@ -1,11 +1,11 @@
 package domain
 
-import "time"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Country struct {
-	ID        uint16     `json:"id"`
-	Name      string     `gorm:"size:100;not null;unique" json:"countryName"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
-	DeletedAt *time.Time `json:"deletedAt"`
+	gorm.Model
+	Name   string  `gorm:"size:100;index"`
+	Stocks []Stock `gorm:"ForeignKey:CountryID"`
 }
