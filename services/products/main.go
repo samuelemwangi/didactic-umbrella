@@ -6,9 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/country"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/product"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation/handlers"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -21,14 +22,16 @@ func init() {
 
 func main() {
 
-	// wire repos
+	//Wire repos
 	repos, err := persistence.NewRepositories()
 
 	// Gettting services
-	countryService := application.NewCountryService(repos.CountryRepo)
+	countryService := country.NewCountryService(repos.CountryRepo)
+	productService := product.NewProductService(repos.ProductRepo)
 
 	//Getting handlers
-	couuntrHandler := presentation.NewCountryHandler(countryService)
+	countryHandler := handlers.NewCountryHandler(countryService)
+	productHandler := handlers.NewProductHandler(productService)
 
 	if err != nil {
 		panic(err)
@@ -39,7 +42,9 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/country", couuntrHandler.SaveCountry)
+	// Routes
+	r.POST("/country", countryHandler.SaveCountry)
+	r.GET("/product/:sku", productHandler.GetProductBySKU)
 
 	app_port := os.Getenv("PORT")
 	if app_port == "" {

@@ -11,10 +11,12 @@ import (
 
 type Repositories struct {
 	CountryRepo repositories.CountryRepository
+	ProductRepo repositories.ProductRepository
 	db          *gorm.DB
 }
 
 func NewRepositories() (*Repositories, error) {
+
 	dbDriver := os.Getenv("DB_DRIVER")
 	dbHost := os.Getenv("DB_HOST")
 	dbPassword := os.Getenv("DB_PASSWORD")
@@ -33,6 +35,7 @@ func NewRepositories() (*Repositories, error) {
 
 	return &Repositories{
 		CountryRepo: repositories.NewCountryRepository(db),
+		ProductRepo: repositories.NewProductRepository(db),
 		db:          db,
 	}, nil
 
@@ -43,5 +46,5 @@ func (r *Repositories) CloseDB() error {
 }
 
 func (r *Repositories) AutoMigrateDB() error {
-	return r.db.AutoMigrate(&domain.Country{}).Error
+	return r.db.AutoMigrate(&domain.Country{}).AutoMigrate(&domain.Product{}).Error
 }

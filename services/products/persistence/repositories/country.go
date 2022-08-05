@@ -6,8 +6,8 @@ import (
 )
 
 type CountryRepository interface {
-	SaveCountry(*domain.Country) (*domain.Country, map[string]string)
-	GetCountries() ([]domain.Country, map[string]string)
+	SaveCountry(*domain.Country) (*domain.Country, *string)
+	GetCountries() ([]domain.Country, *string)
 }
 
 type countryRepository struct {
@@ -18,29 +18,27 @@ func NewCountryRepository(db *gorm.DB) *countryRepository {
 	return &countryRepository{db}
 }
 
-func (c *countryRepository) SaveCountry(country *domain.Country) (*domain.Country, map[string]string) {
-	errors := make(map[string]string)
-
+func (c *countryRepository) SaveCountry(country *domain.Country) (*domain.Country, *string) {
 	err := c.db.Debug().Create(&country).Error
 
 	if err != nil {
-		errors["system_error"] = "an error occured"
-		return nil, errors
+		errorMessage := err.Error()
+		return nil, &errorMessage
 	}
-
 	return country, nil
 }
 
-func (c *countryRepository) GetCountries() ([]domain.Country, map[string]string) {
-	errors := make(map[string]string)
+func (c *countryRepository) GetCountries() ([]domain.Country, *string) {
 
 	var countries []domain.Country
 
 	err := c.db.Debug().Limit(10).Find(&countries).Error
 
 	if err != nil {
-		errors["system_error"] = "an error occured"
+		errorMessage := err.Error()
+		return nil, &errorMessage
 	}
+
 	return countries, nil
 
 }
