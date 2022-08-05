@@ -7,8 +7,8 @@ import (
 type Stock struct {
 	gorm.Model
 	Count     int
-	CountryID uint16
-	ProductID uint64
+	CountryID uint
+	ProductID uint
 	Country   Country
 	Product   Product
 }

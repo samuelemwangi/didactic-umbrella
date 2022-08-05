@@ -41,10 +41,14 @@ func NewRepositories() (*Repositories, error) {
 
 }
 
-func (r *Repositories) CloseDB() error {
-	return r.db.Close()
+func (r *Repositories) CloseDB() {
+	r.db.Close()
 }
 
-func (r *Repositories) AutoMigrateDB() error {
-	return r.db.AutoMigrate(&domain.Country{}, &domain.Product{}, &domain.Stock{}).Error
+func (r *Repositories) AutoMigrateDB() {
+	r.db.AutoMigrate(&domain.Country{})
+	r.db.AutoMigrate(&domain.Product{})
+	r.db.AutoMigrate(&domain.Stock{})
+	r.db.Model(&domain.Stock{}).AddForeignKey("country_id", "countries(id)", "RESTRICT", "RESTRICT")
+	r.db.Model(&domain.Stock{}).AddForeignKey("product_id", "products(id)", "RESTRICT", "RESTRICT")
 }
