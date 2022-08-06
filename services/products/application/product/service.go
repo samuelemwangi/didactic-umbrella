@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence/repositories"
 )
 
@@ -18,9 +19,9 @@ type productService struct {
 	errorService error.ErrorService
 }
 
-func NewProductService(productRepo repositories.ProductRepository) *productService {
+func NewProductService(repos *persistence.Repositories) *productService {
 	return &productService{
-		productRepo:  productRepo,
+		productRepo:  repos.ProductRepo,
 		errorService: error.NewErrorService(),
 	}
 }

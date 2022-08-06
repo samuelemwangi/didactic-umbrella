@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/country"
 )
 
@@ -11,9 +12,9 @@ type CountryHandler struct {
 	countryService country.CountryService
 }
 
-func NewCountryHandler(countryService country.CountryService) *CountryHandler {
+func NewCountryHandler(services *application.Services) *CountryHandler {
 	return &CountryHandler{
-		countryService: countryService,
+		countryService: services.CountryService,
 	}
 }
 

@@ -9,7 +9,7 @@ type CountryRequestDTO struct {
 	CountryName string `validate:"required"`
 }
 
-func (request *CountryRequestDTO) ValidateRequest() map[string]string {
+func (request *CountryRequestDTO) validateRequest() map[string]string {
 	errors := make(map[string]string)
 
 	err := validator.New().Struct(request)

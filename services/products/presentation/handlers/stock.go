@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/stock"
 )
@@ -13,10 +14,10 @@ type StockHandler struct {
 	errorService error.ErrorService
 }
 
-func NewStockHandler(stockService stock.StockService) *StockHandler {
+func NewStockHandler(services *application.Services) *StockHandler {
 	return &StockHandler{
-		stockService: stockService,
-		errorService: error.NewErrorService(),
+		stockService: services.StockService,
+		errorService: services.ErrorService,
 	}
 }
 

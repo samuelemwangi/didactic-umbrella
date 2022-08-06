@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/product"
 )
 
@@ -11,9 +12,9 @@ type ProductHandler struct {
 	productService product.ProductService
 }
 
-func NewProductHandler(productService product.ProductService) *ProductHandler {
+func NewProductHandler(services *application.Services) *ProductHandler {
 	return &ProductHandler{
-		productService: productService,
+		productService: services.ProductService,
 	}
 }
 
