@@ -9,6 +9,7 @@ type Repositories struct {
 	CountryRepo repositories.CountryRepository
 	ProductRepo repositories.ProductRepository
 	StockRepo   repositories.StockRepository
+	UploadRepo  repositories.UploadRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
@@ -16,6 +17,7 @@ func NewRepositories(db *gorm.DB) *Repositories {
 		CountryRepo: repositories.NewCountryRepository(db),
 		ProductRepo: repositories.NewProductRepository(db),
 		StockRepo:   repositories.NewStockRepository(db),
+		UploadRepo:  repositories.NewUploadRepository(db),
 	}
 
 }

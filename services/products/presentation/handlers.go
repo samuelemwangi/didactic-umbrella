@@ -9,6 +9,7 @@ type Handlers struct {
 	CountryHandler handlers.CountryHandler
 	ProductHandler handlers.ProductHandler
 	StockHandler   handlers.StockHandler
+	UploadHandler  handlers.UploadHandler
 }
 
 func NewHandlers(services *application.Services) *Handlers {
@@ -16,5 +17,6 @@ func NewHandlers(services *application.Services) *Handlers {
 		CountryHandler: *handlers.NewCountryHandler(services),
 		ProductHandler: *handlers.NewProductHandler(services),
 		StockHandler:   *handlers.NewStockHandler(services),
+		UploadHandler:  *handlers.NewUploadHandler(services),
 	}
 }

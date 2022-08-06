@@ -36,6 +36,7 @@ func main() {
 		v1.POST("/country", handlers.CountryHandler.SaveCountry)
 		v1.GET("/product/:sku", handlers.ProductHandler.GetProductBySKU)
 		v1.POST("/consume-stock", handlers.StockHandler.ConsumeStock)
+		v1.POST("/upload", handlers.UploadHandler.UploadCSVFile)
 	}
 
 	// run app
