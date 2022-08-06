@@ -6,7 +6,7 @@ import (
 )
 
 type UploadRepository interface {
-	UpdateUpload(*domain.FileUploadMetadata) error
+	UpdateUploadStatus(*domain.FileUploadMetadata) error
 }
 
 type uploadRepository struct {
@@ -19,7 +19,7 @@ func NewUploadRepository(db *gorm.DB) *uploadRepository {
 	}
 }
 
-func (repo *uploadRepository) UpdateUpload(upload *domain.FileUploadMetadata) error {
-	result := repo.db.Model(upload).Updates(upload)
+func (repo *uploadRepository) UpdateUploadStatus(upload *domain.FileUploadMetadata) error {
+	result := repo.db.Model(&domain.FileUploadMetadata{}).Where("upload_id = ?", upload.UploadId).Updates(upload)
 	return result.Error
 }

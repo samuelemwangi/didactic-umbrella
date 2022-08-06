@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application"
@@ -28,14 +29,12 @@ func NewFileProcessingHandler(services *application.Services) *FileProcessingHan
 }
 
 func (handler *FileProcessingHandler) ProcessFile(c *gin.Context) {
-	fileId := c.Param("fileId")
+	fileId := c.Param("fileid")
 
-	uploadRequest := &upload.UploadMetadataRequestDTO{
-		UploadId: fileId,
-	}
-
-	if err := handler.UploadService.SaveUpload(uploadRequest); err != nil {
+	if err := handler.UploadService.ProcessUpload(fileId); err != nil {
 		log.Println(err)
 	}
+
+	c.JSON(http.StatusAccepted, "Hello Tester")
 
 }

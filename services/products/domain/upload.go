@@ -10,6 +10,7 @@ const (
 
 type FileUploadMetadata struct {
 	gorm.Model
-	UploadId        string `gorm:"size:50;unique"`
+	FileName        string `gorm:"size:256"`
+	UploadId        string `gorm:"size:50;uniqueIndex"`
 	ProcessedStatus uint
 }

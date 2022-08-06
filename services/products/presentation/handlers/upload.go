@@ -38,18 +38,18 @@ func (handler *UploadHandler) UploadCSVFile(c *gin.Context) {
 
 	extension := filepath.Ext(file.Filename)
 
-	if !strings.Contains(strings.ToLower(extension), "csv") {
+	if strings.ToLower(extension) != ".csv" {
 		errorResponse := handler.errorService.GetGeneralError(http.StatusBadRequest, "file not supported. kindly upload a csv file")
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
 
 	// upload file
-	fileId := uuid.New().String() + extension
+	fileId := uuid.New().String()
 
 	uploadPath := ensureUploadDirectoryExists()
 
-	if err := c.SaveUploadedFile(file, uploadPath+fileId); err != nil {
+	if err := c.SaveUploadedFile(file, uploadPath+fileId+extension); err != nil {
 		log.Fatalln(err.Error())
 		errorResponse := handler.errorService.GetGeneralError(http.StatusInternalServerError, "file upload failed. kindly retry")
 		c.JSON(errorResponse.Status, errorResponse)
@@ -57,6 +57,7 @@ func (handler *UploadHandler) UploadCSVFile(c *gin.Context) {
 	}
 
 	uploadrequest := upload.UploadMetadataDTO{
+		FileName: file.Filename,
 		UploadId: fileId,
 	}
 

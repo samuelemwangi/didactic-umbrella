@@ -1,12 +1,13 @@
 package upload
 
 import (
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 )
 
 type UploadService interface {
-	SaveUpload(*UploadMetadataRequestDTO) error
+	ProcessUpload(string) error
 }
 
 type uploadService struct {
@@ -19,9 +20,17 @@ func NewUploadService(repos *persistence.Repositories) *uploadService {
 	}
 }
 
-func (service *uploadService) SaveUpload(request *UploadMetadataRequestDTO) error {
-	upload := request.toEntity()
-	err := service.uploadRepo.UpdateUpload(upload)
+func (service *uploadService) ProcessUpload(uploadId string) error {
+	uploadMetadata := &domain.FileUploadMetadata{
+		UploadId:        uploadId,
+		ProcessedStatus: domain.UploadStatusProcessing,
+	}
 
-	return err
+	err := service.uploadRepo.UpdateUploadStatus(uploadMetadata)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
