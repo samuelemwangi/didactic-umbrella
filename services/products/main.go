@@ -2,16 +2,12 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/country"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/product"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation/handlers"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation"
 )
 
 func init() {
@@ -22,35 +18,27 @@ func init() {
 
 func main() {
 
-	//repos
-	repos, err := persistence.NewRepositories()
+	// Db Connection
+	db := persistence.OpenDBConnection()
+	defer db.Close()
 
-	// services
-	countryService := country.NewCountryService(repos.CountryRepo)
-	productService := product.NewProductService(repos.ProductRepo)
+	// wire repositories
+	repos := persistence.NewRepositories(db)
+	services := application.NewServices(repos)
+	handlers := presentation.NewHandlers(services)
 
-	// handlers
-	countryHandler := handlers.NewCountryHandler(countryService)
-	productHandler := handlers.NewProductHandler(productService)
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer repos.CloseDB()
-	repos.AutoMigrateDB()
-
+	// routes
 	r := gin.Default()
 
-	// Routes
-	r.POST("/country", countryHandler.SaveCountry)
-	r.GET("/product/:sku", productHandler.GetProductBySKU)
+	v1 := r.Group("/api/v1")
+	{
 
-	app_port := os.Getenv("PORT")
-	if app_port == "" {
-		app_port = "8888"
+		v1.POST("/country", handlers.CountryHandler.SaveCountry)
+		v1.GET("/product/:sku", handlers.ProductHandler.GetProductBySKU)
+		v1.POST("/consume-stock", handlers.StockHandler.ConsumeStock)
+		v1.POST("/upload", handlers.UploadHandler.UploadCSVFile)
 	}
 
-	r.Run(":" + app_port)
-
+	// run app
+	r.Run(":8085")
 }

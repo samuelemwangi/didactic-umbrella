@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence/repositories"
 )
 
@@ -16,16 +17,16 @@ type countryService struct {
 	errorService error.ErrorService
 }
 
-func NewCountryService(countryRepo repositories.CountryRepository) *countryService {
+func NewCountryService(repos *persistence.Repositories) *countryService {
 	return &countryService{
-		countryRepo:  countryRepo,
+		countryRepo:  repos.CountryRepo,
 		errorService: error.NewErrorService(),
 	}
 }
 
 func (cs *countryService) SaveCountry(countryRequest *CountryRequestDTO) (*CountryResponseDTO, *error.ErrorResponseDTO) {
 
-	validationErrors := countryRequest.ValidateRequest()
+	validationErrors := countryRequest.validateRequest()
 
 	if len(validationErrors) > 0 {
 		return nil, cs.errorService.GetValidationError(http.StatusBadRequest, "validation errors occured", validationErrors)
