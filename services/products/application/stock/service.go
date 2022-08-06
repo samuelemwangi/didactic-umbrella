@@ -35,10 +35,10 @@ func (sc *stockService) ConsumeStock(request *ConsumeStockRequestDTO) (*ConsumeS
 	// validate count in the db
 	data, dbError := sc.stockRepo.GetStockByProductAndCountry(request.toEntity())
 	if dbError != nil {
-		return nil, error.NewErrorService().GetGeneralError(http.StatusBadRequest, *dbError)
+		return nil, sc.errorService.GetGeneralError(http.StatusBadRequest, *dbError)
 	}
 	if data.Count < request.Count {
-		return nil, error.NewErrorService().GetGeneralError(http.StatusBadRequest, "stock not available")
+		return nil, sc.errorService.GetGeneralError(http.StatusBadRequest, "stock not available")
 	}
 
 	// update stock count
@@ -49,7 +49,7 @@ func (sc *stockService) ConsumeStock(request *ConsumeStockRequestDTO) (*ConsumeS
 	_, updateError := sc.stockRepo.UpdateStockCount(data)
 
 	if updateError != nil {
-		return nil, error.NewErrorService().GetGeneralError(http.StatusInternalServerError, *updateError)
+		return nil, sc.errorService.GetGeneralError(http.StatusInternalServerError, *updateError)
 	}
 
 	// prepare response
