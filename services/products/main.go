@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/country"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/product"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/stock"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation/handlers"
 
@@ -28,10 +29,12 @@ func main() {
 	// services
 	countryService := country.NewCountryService(repos.CountryRepo)
 	productService := product.NewProductService(repos.ProductRepo)
+	stockService := stock.NewStockService(repos.StockRepo)
 
 	// handlers
 	countryHandler := handlers.NewCountryHandler(countryService)
 	productHandler := handlers.NewProductHandler(productService)
+	stockHandler := handlers.NewStockHandler(stockService)
 
 	if err != nil {
 		panic(err)
@@ -45,6 +48,7 @@ func main() {
 	// Routes
 	r.POST("/country", countryHandler.SaveCountry)
 	r.GET("/product/:sku", productHandler.GetProductBySKU)
+	r.POST("/consume-stock", stockHandler.ConsumeStock)
 
 	app_port := os.Getenv("PORT")
 	if app_port == "" {

@@ -12,6 +12,7 @@ import (
 type Repositories struct {
 	CountryRepo repositories.CountryRepository
 	ProductRepo repositories.ProductRepository
+	StockRepo   repositories.StockRepository
 	db          *gorm.DB
 }
 
@@ -36,6 +37,7 @@ func NewRepositories() (*Repositories, error) {
 	return &Repositories{
 		CountryRepo: repositories.NewCountryRepository(db),
 		ProductRepo: repositories.NewProductRepository(db),
+		StockRepo:   repositories.NewStockRepository(db),
 		db:          db,
 	}, nil
 
