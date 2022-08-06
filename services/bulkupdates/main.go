@@ -5,7 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/presentation"
 )
 
 func init() {
@@ -23,11 +25,13 @@ func main() {
 	// wire repositories
 	repos := persistence.NewRepositories(db)
 	services := application.NewServices(repos)
-	// handlers := presentation.NewHandlers(services)
+	handlers := presentation.NewHandlers(services)
 
 	// routes
 	r := gin.Default()
 
+	r.GET("/process-file/:fileid", handlers.FileProcessingHandler.ProcessFile)
+
 	// run app
-	r.Run(":8085")
+	r.Run(":8086")
 }
