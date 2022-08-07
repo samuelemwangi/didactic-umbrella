@@ -8,8 +8,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     volumes:
-      - "./mounts/zookeeper-1/data:/var/lib/zookeeper/data"
-      - "./mounts/zookeeper-1/logs:/var/lib/zookeeper/log"
+      - "./cluster-mounts/zookeeper-1/data:/var/lib/zookeeper/data"
+      - "./cluster-mounts/zookeeper-1/logs:/var/lib/zookeeper/log"
     networks:
       - services_network
     restart: on-failure
@@ -26,8 +26,10 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - 29092:29092
     volumes:
-      - "./mounts/kafka-1/data:/var/lib/kafka/data"
+      - "./cluster-mounts/kafka-1/data:/var/lib/kafka/data"
     networks:
       - services_network
     restart: on-failure
@@ -61,72 +63,13 @@ services:
       MYSQL_DATABASE: jumia-mds-test
       MYSQL_USER: test_user
       MYSQL_PASSWORD: testP@ssw0rd
-    volumes:
-      - "./mounts/mysql-db/data:/var/lib/mysql"
-    networks:
-      - services_network
-    restart: on-failure
-
-  products-service:
-    image: products-service
-    depends_on:
-      - kafka-1
-      - mysql-db
-    build:
-      context: ./services/products
-      dockerfile: Dockerfile
-    container_name: products-service
-    environment:
-      DB_HOST: mysql-db
-      DB_USER: test_user
-      DB_PASSWORD: testP@ssw0rd
-      DB_NAME: jumia-mds-test
-      DB_PORT: 3306
-      FILE_PATH: ./uploads
-      BOOTSTRAP_SERVERS: kafka-1:9092
-    volumes:
-      - "./mounts/uploads:/app/uploads"
-    networks:
-      - services_network
-    restart: on-failure
-
-  bulkupdates-service:
-    image: bulkupdates-service
-    depends_on:
-      - kafka-1
-      - mysql-db
-      - products-service
-    build:
-      context: ./services/bulkupdates
-      dockerfile: Dockerfile
-    container_name: bulkupdates-service
-    environment:
-      DB_HOST: mysql-db
-      DB_USER: test_user
-      DB_PASSWORD: testP@ssw0rd
-      DB_NAME: jumia-mds-test
-      DB_PORT: 3306
-      FILE_PATH: ./uploads
-      BOOTSTRAP_SERVERS: kafka-1:9092
-    volumes:
-      - "./mounts/uploads:/app/uploads"
-    networks:
-      - services_network
-    restart: on-failure
-
-  krakend-ce:
-    image: devopsfaith/krakend:latest
-    container_name: krakend-ce
-    volumes:
-      - ./krakend:/etc/krakend
     ports:
-      - "8088:8080"
-    command: [ "run", "-d", "-c", "/etc/krakend/krakend.json" ]
-    depends_on:
-      - products-service
-      - bulkupdates-service
+      - 3307:3306
+    volumes:
+      - "./cluster-mounts/mysql-db/data:/var/lib/mysql"
     networks:
       - services_network
+    restart: on-failure
 
 networks:
   services_network:

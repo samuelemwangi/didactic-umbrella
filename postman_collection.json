@@ -1,0 +1,364 @@
+{
+	"info": {
+		"_postman_id": "288ce25f-5abd-49b7-9bc5-d8ab6fe4bce8",
+		"name": "Jumia MDS Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19675852"
+	},
+	"item": [
+		{
+			"name": "Stock",
+			"item": [
+				{
+					"name": "Consume Stock",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Country-Code",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\":1,\r\n    \"countryId\": 1,\r\n    \"quantity\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_base_url}}/stock/consume",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"stock",
+								"consume"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Country",
+			"item": [
+				{
+					"name": "Get Countries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response has country items\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.items.length).to.be.greaterThan(0) \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_base_url}}/countries",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"countries"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Get Product By SKU",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_base_url}}/products/e920c573f128",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"products",
+								"e920c573f128"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response has product items\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.items.length).to.be.greaterThan(0) \r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_base_url}}/products",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Upload",
+			"item": [
+				{
+					"name": "Upload CSV",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Apps/Challenges/challenge_files/file_1.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{gateway_base_url}}/upload",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Processing Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", ()=>{\r",
+									"   pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body to have valid parts\", ()=>{\r",
+									"    responseBody =  pm.response.json();\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseStatus).to.not.be.null\r",
+									"\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.undefined\r",
+									"    pm.expect(responseBody.responseMessage).to.not.be.null\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_base_url}}/upload-status/772eeeec-1637-4bdd-a58e-cb063ec6571b",
+							"host": [
+								"{{gateway_base_url}}"
+							],
+							"path": [
+								"upload-status",
+								"772eeeec-1637-4bdd-a58e-cb063ec6571b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "products_base_url",
+			"value": "localhost:8085/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "bulk_updates_base_url",
+			"value": "localhost:8086/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "gateway_base_url",
+			"value": "localhost:8088/api/v1",
+			"type": "string"
+		}
+	]
+}
