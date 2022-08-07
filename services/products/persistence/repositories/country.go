@@ -7,7 +7,7 @@ import (
 
 type CountryRepository interface {
 	SaveCountry(*domain.Country) error
-	GetCountries() ([]domain.Country, error)
+	GetCountries() ([]*domain.Country, error)
 }
 
 type countryRepository struct {
@@ -25,9 +25,8 @@ func (repo *countryRepository) SaveCountry(country *domain.Country) error {
 	return result.Error
 }
 
-func (repo *countryRepository) GetCountries() ([]domain.Country, error) {
-	var countries []domain.Country
+func (repo *countryRepository) GetCountries() ([]*domain.Country, error) {
+	var countries []*domain.Country
 	result := repo.db.Find(&countries)
 	return countries, result.Error
-
 }

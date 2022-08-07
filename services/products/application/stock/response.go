@@ -6,25 +6,31 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 )
 
-type ConsumeStockDetailDTO struct {
-	ID        uint `json:"id"`
-	Quantity  int  `json:"count"`
-	ProductID uint `json:"productId"`
-	CountryID uint `json:"countryId"`
+type consumeStockDetailDTO struct {
+	ID              uint   `json:"id"`
+	QuantityBalance int    `json:"quantityBalance"`
+	ProductID       uint   `json:"productId"`
+	ProductSKU      string `json:"productSKU"`
+	ProductName     string `json:"productName"`
+	CountryID       uint   `json:"countryId"`
+	CountryCode     string `json:"countryCode"`
 }
 
 type ConsumeStockResponseDTO struct {
 	Status  int                    `json:"responseStatus"`
 	Message string                 `json:"responseMessage"`
-	Item    *ConsumeStockDetailDTO `json:"itemDetails"`
+	Item    *consumeStockDetailDTO `json:"itemDetails"`
 }
 
 func (response *ConsumeStockResponseDTO) toResponseDTO(stock *domain.Stock) {
-	stockDetail := &ConsumeStockDetailDTO{
-		ID:        stock.ID,
-		Quantity:  stock.Quantity,
-		CountryID: stock.CountryID,
-		ProductID: stock.ProductID,
+	stockDetail := &consumeStockDetailDTO{
+		ID:              stock.ID,
+		QuantityBalance: stock.Quantity,
+		ProductID:       stock.ProductID,
+		ProductSKU:      stock.Product.SKU,
+		ProductName:     stock.Product.Name,
+		CountryID:       stock.CountryID,
+		CountryCode:     stock.Country.Code,
 	}
 
 	response.Status = http.StatusOK

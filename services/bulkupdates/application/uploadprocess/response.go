@@ -39,7 +39,7 @@ func (upload *uploadProcessDetailDTO) setStatusText(uploadMetadata *domain.Uploa
 
 	switch uploadMetadata.ProcessedStatus {
 	case domain.UploadStatusUploaded:
-		upload.ProcessingStatus = "New"
+		upload.ProcessingStatus = "New Upload"
 		return
 	case domain.UploadStatusProcessing:
 		upload.ProcessingStatus = "Processing"

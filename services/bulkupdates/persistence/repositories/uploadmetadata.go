@@ -27,6 +27,10 @@ func (repo *uploadMetadataRepository) GetUploadByUploadId(upload *domain.UploadM
 }
 
 func (repo *uploadMetadataRepository) UpdateUploadStatus(upload *domain.UploadMetadata) error {
-	result := repo.db.Model(&domain.UploadMetadata{}).Where("upload_id = ?", upload.UploadID).Updates(upload)
+	itemsToUpdate := map[string]interface{}{
+		"processed_status": upload.ProcessedStatus,
+	}
+
+	result := repo.db.Model(&domain.UploadMetadata{}).Where("upload_id = ?", upload.UploadID).Updates(itemsToUpdate)
 	return result.Error
 }

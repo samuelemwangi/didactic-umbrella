@@ -10,6 +10,7 @@ import (
 
 type CountryService interface {
 	SaveCountry(*CountryRequestDTO) (*CountryResponseDTO, *errorhelper.ErrorResponseDTO)
+	GetCountries() (*CountriesResponseDTO, *errorhelper.ErrorResponseDTO)
 }
 
 type countryService struct {
@@ -42,7 +43,22 @@ func (service *countryService) SaveCountry(countryRequest *CountryRequestDTO) (*
 
 	}
 	var countryResponse CountryResponseDTO
-	countryResponse.toResponseDTO(country)
+	countryResponse.toCountryResponseDTO(country)
 
 	return &countryResponse, nil
+}
+
+func (service *countryService) GetCountries() (*CountriesResponseDTO, *errorhelper.ErrorResponseDTO) {
+
+	// get items
+	countries, dbError := service.countryRepo.GetCountries()
+
+	if dbError != nil {
+		return nil, service.errorService.GetGeneralError(http.StatusInternalServerError, dbError)
+	}
+
+	var countriesResponse CountriesResponseDTO
+	countriesResponse.toCountriesResponseDTO(countries)
+
+	return &countriesResponse, nil
 }

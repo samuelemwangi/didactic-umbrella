@@ -22,7 +22,7 @@ func NewStockRepository(db *gorm.DB) *stockRepository {
 }
 
 func (repo *stockRepository) GetStockByProductAndCountry(stock *domain.Stock) error {
-	result := repo.db.First(stock, "country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID)
+	result := repo.db.Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Take(stock)
 	return result.Error
 }
 
@@ -32,6 +32,9 @@ func (repo *stockRepository) SaveStock(stock *domain.Stock) error {
 }
 
 func (repo *stockRepository) UpdateStock(stock *domain.Stock) error {
-	result := repo.db.Model(&domain.Stock{}).Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Updates(stock)
+	itemsToUpdate := map[string]interface{}{
+		"quantity": stock.Quantity,
+	}
+	result := repo.db.Model(&domain.Stock{}).Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Updates(itemsToUpdate)
 	return result.Error
 }

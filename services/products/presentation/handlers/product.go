@@ -32,3 +32,13 @@ func (handler *ProductHandler) GetProductBySKU(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, productResponse)
 }
+
+func (handler *ProductHandler) GetProducts(c *gin.Context) {
+	productsResponse, errorResponse := handler.productService.GetProducts()
+
+	if errorResponse != nil {
+		c.JSON(errorResponse.Status, errorResponse)
+		return
+	}
+	c.JSON(http.StatusOK, productsResponse)
+}

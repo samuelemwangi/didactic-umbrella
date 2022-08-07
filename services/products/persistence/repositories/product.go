@@ -7,6 +7,7 @@ import (
 
 type ProductRepository interface {
 	GetProductBySKU(*domain.Product) error
+	GetProducts() ([]*domain.Product, error)
 }
 
 type productRepository struct {
@@ -22,4 +23,10 @@ func NewProductRepository(db *gorm.DB) *productRepository {
 func (repo *productRepository) GetProductBySKU(product *domain.Product) error {
 	result := repo.db.First(product, "sku = ?", product.SKU)
 	return result.Error
+}
+
+func (repo *productRepository) GetProducts() ([]*domain.Product, error) {
+	var products []*domain.Product
+	result := repo.db.Find(&products)
+	return products, result.Error
 }

@@ -6,45 +6,49 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 )
 
-type uploadMetadataDetailDTO struct {
-	UploadID string `json:"uploadId"`
-	Status   string `json:"status"`
+type uploadDetailDTO struct {
+	UploadID         string `json:"uploadId"`
+	UploadedFileName string `json:"uploadedFileName"`
+	ProcessingStatus string `json:"processingStatus"`
+	CreatedAt        string `json:"uploadedAt"`
 }
 
 type UploadResponseDTO struct {
-	Status  int                      `json:"responseStatus"`
-	Message string                   `json:"responseMessage"`
-	Item    *uploadMetadataDetailDTO `json:"itemDetails"`
+	Status  int              `json:"responseStatus"`
+	Message string           `json:"responseMessage"`
+	Item    *uploadDetailDTO `json:"itemDetails"`
 }
 
-func (response *UploadResponseDTO) toResponseDTO(uploadMetadata *domain.UploadMetadata) {
-	uploadDetail := &uploadMetadataDetailDTO{
-		UploadID: uploadMetadata.UploadID,
+func (response *UploadResponseDTO) toResponseDTO(entity *domain.UploadMetadata) {
+
+	uploadDetails := &uploadDetailDTO{
+		UploadID:         entity.UploadID,
+		UploadedFileName: entity.FileName,
+		CreatedAt:        entity.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
 
-	uploadDetail.setStatusText(uploadMetadata)
-
+	uploadDetails.setStatusText(entity)
 	response.Status = http.StatusOK
 	response.Message = "request successful"
-	response.Item = uploadDetail
+	response.Item = uploadDetails
 }
 
-func (upload *uploadMetadataDetailDTO) setStatusText(uploadMetadata *domain.UploadMetadata) {
+func (upload *uploadDetailDTO) setStatusText(uploadMetadata *domain.UploadMetadata) {
 
 	switch uploadMetadata.ProcessedStatus {
 	case domain.UploadStatusUploaded:
-		upload.Status = "New"
+		upload.ProcessingStatus = "New Upload"
 		return
 	case domain.UploadStatusProcessing:
-		upload.Status = "Processing"
+		upload.ProcessingStatus = "Processing"
 		return
 	case domain.UploadStatusProcessed:
-		upload.Status = "Processed"
+		upload.ProcessingStatus = "Processed"
 		return
 	case domain.UploadStatusProcessingAborted:
-		upload.Status = "Processing Aborted"
+		upload.ProcessingStatus = "Processing Aborted"
 		return
 	default:
-		upload.Status = "Unknown Status"
+		upload.ProcessingStatus = "Unknown Status"
 	}
 }
