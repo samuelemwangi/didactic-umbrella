@@ -6,6 +6,7 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/product"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/stock"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/upload"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/infrastructure/queueing"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 )
 
@@ -17,12 +18,12 @@ type Services struct {
 	ErrorService   error.ErrorService
 }
 
-func NewServices(repos *persistence.Repositories) *Services {
+func NewServices(repos *persistence.Repositories, kafkaProducer queueing.KafkaProducer) *Services {
 	return &Services{
 		CountryService: country.NewCountryService(repos),
 		ProductService: product.NewProductService(repos),
 		StockService:   stock.NewStockService(repos),
-		UploadService:  upload.NewUploadService(repos),
+		UploadService:  upload.NewUploadService(repos, kafkaProducer),
 		ErrorService:   error.NewErrorService(),
 	}
 }

@@ -2,6 +2,7 @@ package upload
 
 import (
 	"errors"
+	"log"
 	"strconv"
 
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/country"
@@ -9,6 +10,7 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/stock"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/infrastructure/fileutils"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/infrastructure/queueing"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 )
@@ -24,6 +26,7 @@ type uploadService struct {
 	countryService country.CountryService
 	productService product.ProductService
 	stockService   stock.StockService
+	kafkaConsumer  queueing.KafkaConsumer
 	uploadId       string
 }
 
@@ -34,11 +37,22 @@ func NewUploadService(repos *persistence.Repositories) *uploadService {
 		countryService: country.NewCountryService(repos),
 		productService: product.NewProductService(repos),
 		stockService:   stock.NewStockService(repos),
+		kafkaConsumer:  queueing.NewKafkaConsumer(),
 	}
 }
 
 func (service *uploadService) ProcessUpload(filePath, uploadId string) error {
 	service.uploadId = uploadId
+
+	messageId, consumerError := service.kafkaConsumer.ConsumeMessage("file-process-topic")
+
+	if consumerError != nil {
+		return consumerError
+	}
+
+	log.Println()
+	log.Println("message id: ", messageId)
+	log.Println()
 
 	data, err := service.csvReader.ReadFile(filePath)
 	service.ManageUpdateUploadStatus(domain.UploadStatusProcessing, uint(len(data)), 0)

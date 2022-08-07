@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/infrastructure/queueing"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation"
 )
@@ -24,7 +25,7 @@ func main() {
 
 	// wire repositories
 	repos := persistence.NewRepositories(db)
-	services := application.NewServices(repos)
+	services := application.NewServices(repos, queueing.NewKafkaProducer())
 	handlers := presentation.NewHandlers(services)
 
 	// routes

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/infrastructure/queueing"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence/repositories"
 )
@@ -13,14 +14,16 @@ type UploadService interface {
 }
 
 type uploadService struct {
-	uploadRepo   repositories.UploadRepository
-	errorService error.ErrorService
+	uploadRepo    repositories.UploadRepository
+	errorService  error.ErrorService
+	kafkaProducer queueing.KafkaProducer
 }
 
-func NewUploadService(repos *persistence.Repositories) *uploadService {
+func NewUploadService(repos *persistence.Repositories, kafkaProducer queueing.KafkaProducer) *uploadService {
 	return &uploadService{
-		uploadRepo:   repos.UploadRepo,
-		errorService: error.NewErrorService(),
+		uploadRepo:    repos.UploadRepo,
+		errorService:  error.NewErrorService(),
+		kafkaProducer: kafkaProducer,
 	}
 }
 
@@ -34,6 +37,8 @@ func (service *uploadService) SaveUploadMetadaData(request *UploadMetadataDTO) (
 
 	response := UploadResponseDTO{}
 	response.toResponseDTO(data)
+
+	service.kafkaProducer.ProduceMessage("file-process-topic", response.Item.UploadId)
 
 	return &response, nil
 }
