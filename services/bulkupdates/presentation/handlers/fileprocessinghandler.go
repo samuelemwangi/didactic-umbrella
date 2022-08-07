@@ -2,43 +2,58 @@ package handlers
 
 import (
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/country"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/product"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/stock"
-	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/upload"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/uploadmetadata"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/infrastructure/queueing"
 )
 
 type FileProcessingHandler struct {
-	CountryService country.CountryService
-	ProductService product.ProductService
-	StockService   stock.StockService
-	UploadService  upload.UploadService
+	CountryService        country.CountryService
+	ProductService        product.ProductService
+	StockService          stock.StockService
+	UploadMetadataService uploadmetadata.UploadMetadataService
+	kafkaConsumer         queueing.KafkaConsumer
 }
 
 func NewFileProcessingHandler(services *application.Services) *FileProcessingHandler {
 	return &FileProcessingHandler{
-		CountryService: services.CountryService,
-		ProductService: services.ProductService,
-		StockService:   services.StockService,
-		UploadService:  services.UploadService,
+		CountryService:        services.CountryService,
+		ProductService:        services.ProductService,
+		StockService:          services.StockService,
+		UploadMetadataService: services.UploadMetadataService,
+		kafkaConsumer:         queueing.NewKafkaConsumer(),
 	}
 }
 
-func (handler *FileProcessingHandler) ProcessFile(c *gin.Context) {
-	fileId := c.Param("fileid")
+func (handler *FileProcessingHandler) ProcessFile() {
 
-	filepath := ensureUploadDirectoryExists() + "/" + fileId + ".csv"
+	for {
+		messageId, consumerError := handler.kafkaConsumer.ConsumeMessage("file-process-topic")
 
-	if err := handler.UploadService.ProcessUpload(filepath, fileId); err != nil {
-		log.Println(err)
+		if consumerError != nil {
+			log.Println(consumerError)
+		} else {
+			log.Println()
+			log.Println("Processing Data")
+			log.Println("messageId: ", *messageId)
+			log.Println()
+			log.Println()
+			filepath := ensureUploadDirectoryExists() + "/" + *messageId + ".csv"
+			if err := handler.UploadMetadataService.ProcessUpload(filepath, *messageId); err != nil {
+				log.Println(err)
+			} else {
+				log.Println()
+				log.Println("Processing Completed")
+				log.Println()
+				log.Println()
+			}
+		}
 	}
-
-	c.JSON(http.StatusAccepted, "Hello Tester")
 
 }
 

@@ -1,13 +1,14 @@
 package product
 
 import (
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 	"gorm.io/gorm"
 )
 
 type ProductService interface {
-	SaveProduct(*ProductRequestDTO) (*ProductItemDTO, error)
+	SaveProduct(string, string) (*ProductItemDTO, error)
 }
 
 type productService struct {
@@ -20,11 +21,15 @@ func NewProductService(repos *persistence.Repositories) *productService {
 	}
 }
 
-func (service *productService) SaveProduct(request *ProductRequestDTO) (*ProductItemDTO, error) {
+func (service *productService) SaveProduct(sku string, productName string) (*ProductItemDTO, error) {
 	var responseDTO ProductItemDTO
 
-	product := request.toEntity()
-	err := service.productRepo.GetProduct(product)
+	product := &domain.Product{
+		SKU:  sku,
+		Name: productName,
+	}
+
+	err := service.productRepo.GetProductBySKU(product)
 
 	if err != nil {
 		if gorm.ErrRecordNotFound.Error() == err.Error() {

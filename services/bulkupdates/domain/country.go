@@ -6,6 +6,6 @@ import (
 
 type Country struct {
 	gorm.Model
-	Name   string `gorm:"size:100;unique"`
+	Code   string `gorm:"size:100;unique"`
 	Stocks []Stock
 }

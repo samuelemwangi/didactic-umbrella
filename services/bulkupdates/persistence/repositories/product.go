@@ -6,7 +6,7 @@ import (
 )
 
 type ProductRepository interface {
-	GetProduct(*domain.Product) error
+	GetProductBySKU(*domain.Product) error
 	SaveProduct(*domain.Product) error
 }
 
@@ -20,8 +20,8 @@ func NewProductRepository(db *gorm.DB) *productRepository {
 	}
 }
 
-func (repo *productRepository) GetProduct(product *domain.Product) error {
-	result := repo.db.Where("sku = ?", product.SKU).Find(product)
+func (repo *productRepository) GetProductBySKU(product *domain.Product) error {
+	result := repo.db.First(product, "sku = ?", product.SKU)
 	return result.Error
 }
 

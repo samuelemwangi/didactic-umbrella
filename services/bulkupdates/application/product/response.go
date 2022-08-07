@@ -3,13 +3,13 @@ package product
 import "github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 
 type ProductItemDTO struct {
-	ProductId uint
-	SKU       string
-	Name      string
+	ProductID   uint
+	SKU         string
+	ProductName string
 }
 
 func (dto *ProductItemDTO) toResponseDTO(entity *domain.Product) {
-	dto.ProductId = entity.ID
+	dto.ProductID = entity.ID
 	dto.SKU = entity.SKU
-	dto.Name = entity.Name
+	dto.ProductName = entity.Name
 }

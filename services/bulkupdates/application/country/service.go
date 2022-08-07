@@ -21,14 +21,14 @@ func NewCountryService(repos *persistence.Repositories) *countryService {
 	}
 }
 
-func (service *countryService) SaveCountry(countryName string) (*CountryItemDTO, error) {
+func (service *countryService) SaveCountry(countryCode string) (*CountryItemDTO, error) {
 	var responseDTO CountryItemDTO
 
 	country := &domain.Country{
-		Name: countryName,
+		Code: countryCode,
 	}
 
-	err := service.countryRepo.GetCountry(country)
+	err := service.countryRepo.GetCountryByCode(country)
 
 	if err != nil {
 		if gorm.ErrRecordNotFound.Error() == err.Error() {

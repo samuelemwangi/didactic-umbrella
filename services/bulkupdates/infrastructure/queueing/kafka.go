@@ -1,9 +1,10 @@
 package queueing
 
 import (
+	"context"
 	"os"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/segmentio/kafka-go"
 )
 
 type KafkaConsumer interface {
@@ -26,24 +27,19 @@ func NewKafkaConsumer() *kafkaConsumer {
 
 func (kafkaConsumer *kafkaConsumer) ConsumeMessage(topic string) (*string, error) {
 
-	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": kafkaConsumer.bootStrapServer,
-		"group.id":          "kafka-consumer-group-1",
-		"auto.offset.reset": "earliest",
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers:     []string{kafkaConsumer.bootStrapServer},
+		Topic:       topic,
+		GroupID:     "kafka-consumer-group-1",
+		StartOffset: kafka.FirstOffset,
 	})
 
+	m, err := r.ReadMessage(context.Background())
 	if err != nil {
 		return nil, err
 	}
-
-	c.SubscribeTopics([]string{topic, "^aRegex.*[Tt]opic"}, nil)
-
-	msg, err := c.ReadMessage(-1)
-
-	c.Close()
-
-	message := string(msg.Value)
-
-	return &message, err
+	message := string(m.Value)
+	r.Close()
+	return &message, nil
 
 }
