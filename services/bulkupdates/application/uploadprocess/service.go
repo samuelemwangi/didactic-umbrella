@@ -120,7 +120,8 @@ func (service *uploadProcessorService) ProcessFileData(data [][]string) error {
 func (service *uploadProcessorService) ManageUpdateUploadStatus(status uint, total uint, processed uint) error {
 
 	service.uploadMetadata.ProcessedStatus = status
-	service.uploadMetadata.TotalItems = total
+	//  we ignore the 1st line
+	service.uploadMetadata.TotalItems = total - 1
 	service.uploadMetadata.TotalItemsProcesed = processed
 	err := service.uploadMetdataRepo.UpdateUploadStatus(service.uploadMetadata)
 
