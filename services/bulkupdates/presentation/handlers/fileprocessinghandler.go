@@ -54,21 +54,15 @@ func (handler *FileProcessingHandler) ProcessFile() {
 		messageId, consumerError := handler.kafkaConsumer.ConsumeMessage("file-process-topic")
 
 		if consumerError != nil {
-			log.Println(consumerError)
+			log.Fatalln("Fatal error occured:", consumerError)
+			panic(consumerError)
 		} else {
-			log.Println()
-			log.Println("Processing Data")
-			log.Println("messageId: ", *messageId)
-			log.Println()
-			log.Println()
+			log.Println("Processing Message: ", *messageId)
 			filepath := ensureUploadDirectoryExists() + "/" + *messageId + ".csv"
 			if err := handler.UploadProcessorService.ProcessUpload(filepath, *messageId); err != nil {
-				log.Println(err)
+				log.Fatalln(err)
 			} else {
-				log.Println()
 				log.Println("Processing Completed")
-				log.Println()
-				log.Println()
 			}
 		}
 	}

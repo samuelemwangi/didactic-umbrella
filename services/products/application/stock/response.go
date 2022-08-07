@@ -7,13 +7,10 @@ import (
 )
 
 type consumeStockDetailDTO struct {
-	ID              uint   `json:"id"`
-	QuantityBalance int    `json:"quantityBalance"`
-	ProductID       uint   `json:"productId"`
-	ProductSKU      string `json:"productSKU"`
-	ProductName     string `json:"productName"`
-	CountryID       uint   `json:"countryId"`
-	CountryCode     string `json:"countryCode"`
+	ID              uint `json:"id"`
+	QuantityBalance int  `json:"quantityBalance"`
+	ProductID       uint `json:"productId"`
+	CountryID       uint `json:"countryId"`
 }
 
 type ConsumeStockResponseDTO struct {
@@ -27,10 +24,7 @@ func (response *ConsumeStockResponseDTO) toResponseDTO(stock *domain.Stock) {
 		ID:              stock.ID,
 		QuantityBalance: stock.Quantity,
 		ProductID:       stock.ProductID,
-		ProductSKU:      stock.Product.SKU,
-		ProductName:     stock.Product.Name,
 		CountryID:       stock.CountryID,
-		CountryCode:     stock.Country.Code,
 	}
 
 	response.Status = http.StatusOK

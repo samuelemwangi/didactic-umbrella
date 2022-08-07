@@ -1,0 +1,101 @@
+{
+    "$schema": "https://www.krakend.io/schema/v3.json",
+    "version": 3,
+    "name": "Jumia MDS Test",
+    "timeout": "3000ms",
+    "cache_ttl": "300s",
+    "output_encoding": "no-op",
+    "endpoints": [
+      {
+        "endpoint": "/api/v1/countries",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/countries",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "GET",
+            "host": ["products-service:8085"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/api/v1/products",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/products",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "GET",
+            "host": ["products-service:8085"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/api/v1/products/{sku}",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/products/{sku}",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "GET",
+            "host": ["products-service:8085"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/api/v1/stock/consume",
+        "method": "POST",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/stock/consume",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "POST",
+            "host": ["products-service:8085"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/api/v1/upload",
+        "method": "POST",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/upload",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "POST",
+            "host": ["products-service:8085"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/api/v1/upload-status/{uploadid}",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/api/v1/upload-status/{uploadid}",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "GET",
+            "host": ["bulkupdates-service:8086"],
+            "disable_host_sanitize": false
+          }
+        ]
+      }
+     
+    ]
+  }

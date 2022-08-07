@@ -36,7 +36,7 @@ func main() {
 		v1.GET("/countries", handlers.CountryHandler.GetCountries)
 
 		v1.GET("/products", handlers.ProductHandler.GetProducts)
-		v1.GET("/product/:sku", handlers.ProductHandler.GetProductBySKU)
+		v1.GET("/products/:sku", handlers.ProductHandler.GetProductBySKU)
 
 		v1.POST("/stock/consume", handlers.StockHandler.ConsumeStock)
 
