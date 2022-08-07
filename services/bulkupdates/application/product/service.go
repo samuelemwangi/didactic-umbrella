@@ -7,7 +7,7 @@ import (
 )
 
 type ProductService interface {
-	SaveProduct(*ProductRequestDTO) error
+	SaveProduct(*ProductRequestDTO) (*ProductItemDTO, error)
 }
 
 type productService struct {
@@ -20,17 +20,25 @@ func NewProductService(repos *persistence.Repositories) *productService {
 	}
 }
 
-func (service *productService) SaveProduct(request *ProductRequestDTO) error {
+func (service *productService) SaveProduct(request *ProductRequestDTO) (*ProductItemDTO, error) {
+	var responseDTO ProductItemDTO
+
 	product := request.toEntity()
 	err := service.productRepo.GetProduct(product)
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return service.productRepo.SaveProduct(product)
+		if gorm.ErrRecordNotFound.Error() == err.Error() {
+			err = service.productRepo.SaveProduct(product)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
 		}
-		return err
 	}
 
-	return nil
+	responseDTO.toResponseDTO(product)
+
+	return &responseDTO, nil
 
 }

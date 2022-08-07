@@ -5,11 +5,15 @@ import "github.com/jinzhu/gorm"
 const (
 	UploadStatusUploaded = iota
 	UploadStatusProcessing
+	UploadStatusProcessingAborted
 	UploadStatusProcessed
 )
 
 type FileUploadMetadata struct {
 	gorm.Model
-	UploadId        string `gorm:"size:50;unique"`
-	ProcessedStatus uint
+	FileName           string `gorm:"size:256"`
+	UploadId           string `gorm:"size:50;unique"`
+	TotalItems         uint
+	TotalItemsProcesed uint
+	ProcessedStatus    uint
 }

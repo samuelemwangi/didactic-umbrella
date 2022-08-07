@@ -21,7 +21,7 @@ func NewProductRepository(db *gorm.DB) *productRepository {
 }
 
 func (repo *productRepository) GetProduct(product *domain.Product) error {
-	result := repo.db.Where(product).Find(product)
+	result := repo.db.Where("sku = ?", product.SKU).Find(product)
 	return result.Error
 }
 

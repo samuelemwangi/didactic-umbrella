@@ -1,13 +1,14 @@
 package country
 
 import (
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 	"gorm.io/gorm"
 )
 
 type CountryService interface {
-	SaveCountry(*CountryRequestDTO) error
+	SaveCountry(string) (*CountryItemDTO, error)
 }
 
 type countryService struct {
@@ -20,17 +21,28 @@ func NewCountryService(repos *persistence.Repositories) *countryService {
 	}
 }
 
-func (service *countryService) SaveCountry(request *CountryRequestDTO) error {
-	country := request.toEntity()
+func (service *countryService) SaveCountry(countryName string) (*CountryItemDTO, error) {
+	var responseDTO CountryItemDTO
+
+	country := &domain.Country{
+		Name: countryName,
+	}
+
 	err := service.countryRepo.GetCountry(country)
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return service.countryRepo.SaveCountry(country)
+		if gorm.ErrRecordNotFound.Error() == err.Error() {
+			err = service.countryRepo.SaveCountry(country)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
 		}
-		return err
 	}
 
-	return nil
+	responseDTO.toResponseDTO(country)
+
+	return &responseDTO, nil
 
 }

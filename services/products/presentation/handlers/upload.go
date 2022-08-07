@@ -49,7 +49,7 @@ func (handler *UploadHandler) UploadCSVFile(c *gin.Context) {
 
 	uploadPath := ensureUploadDirectoryExists()
 
-	if err := c.SaveUploadedFile(file, uploadPath+fileId+extension); err != nil {
+	if err := c.SaveUploadedFile(file, uploadPath+"/"+fileId+extension); err != nil {
 		log.Fatalln(err.Error())
 		errorResponse := handler.errorService.GetGeneralError(http.StatusInternalServerError, "file upload failed. kindly retry")
 		c.JSON(errorResponse.Status, errorResponse)

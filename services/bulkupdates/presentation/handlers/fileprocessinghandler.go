@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application"
@@ -31,10 +32,25 @@ func NewFileProcessingHandler(services *application.Services) *FileProcessingHan
 func (handler *FileProcessingHandler) ProcessFile(c *gin.Context) {
 	fileId := c.Param("fileid")
 
-	if err := handler.UploadService.ProcessUpload(fileId); err != nil {
+	filepath := ensureUploadDirectoryExists() + "/" + fileId + ".csv"
+
+	if err := handler.UploadService.ProcessUpload(filepath, fileId); err != nil {
 		log.Println(err)
 	}
 
 	c.JSON(http.StatusAccepted, "Hello Tester")
 
+}
+
+func ensureUploadDirectoryExists() string {
+	uploadPath := os.Getenv("FILE_PATH")
+	if uploadPath == "" {
+		uploadPath = "../../uploads/csv"
+	}
+
+	if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
+		os.MkdirAll(uploadPath, 0755)
+	}
+
+	return uploadPath
 }

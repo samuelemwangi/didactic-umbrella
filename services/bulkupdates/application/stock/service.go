@@ -21,17 +21,28 @@ func NewStockService(repos *persistence.Repositories) *stockService {
 }
 
 func (service *stockService) SaveStock(request *StockRequestDTO) error {
-
 	// Get stock
 	stock := request.toEntity()
-	err := service.stockRepo.GetStock(stock)
+	err := service.stockRepo.GetStockByProductAndCountry(stock)
 
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return service.stockRepo.SaveStock(stock)
-		}
+	if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
 		return err
 	}
 
-	return nil
+	// if no stock found, create new one
+	if err != nil && err.Error() == gorm.ErrRecordNotFound.Error() {
+
+		stock.Count = request.Quantity
+		if stock.Count < 0 {
+			stock.Count = 0
+		}
+		return service.stockRepo.SaveStock(stock)
+	}
+
+	// if stock found, update it
+	stock.Count = stock.Count + request.Quantity
+	if stock.Count < 0 {
+		stock.Count = 0
+	}
+	return service.stockRepo.UpdateStock(stock)
 }
