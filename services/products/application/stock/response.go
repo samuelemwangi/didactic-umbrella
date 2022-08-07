@@ -6,29 +6,29 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 )
 
-type StockDetailDTO struct {
+type ConsumeStockDetailDTO struct {
 	ID        uint `json:"id"`
-	Count     int  `json:"count"`
+	Quantity  int  `json:"count"`
 	ProductID uint `json:"productId"`
 	CountryID uint `json:"countryId"`
 }
 
 type ConsumeStockResponseDTO struct {
-	Status  int             `json:"responseStatus"`
-	Message string          `json:"responseMessage"`
-	Item    *StockDetailDTO `json:"itemDetails"`
+	Status  int                    `json:"responseStatus"`
+	Message string                 `json:"responseMessage"`
+	Item    *ConsumeStockDetailDTO `json:"itemDetails"`
 }
 
-func (cr *ConsumeStockResponseDTO) toResponseDTO(stock *domain.Stock) {
-	stockDetail := &StockDetailDTO{
+func (response *ConsumeStockResponseDTO) toResponseDTO(stock *domain.Stock) {
+	stockDetail := &ConsumeStockDetailDTO{
 		ID:        stock.ID,
-		Count:     stock.Count,
+		Quantity:  stock.Quantity,
 		CountryID: stock.CountryID,
 		ProductID: stock.ProductID,
 	}
 
-	cr.Status = http.StatusOK
-	cr.Message = "request successful"
-	cr.Item = stockDetail
+	response.Status = http.StatusOK
+	response.Message = "request successful"
+	response.Item = stockDetail
 
 }

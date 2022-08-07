@@ -6,8 +6,9 @@ import (
 )
 
 type StockRepository interface {
-	GetStockByProductAndCountry(*domain.Stock) (*domain.Stock, *string)
-	UpdateStockCount(*domain.Stock) (*domain.Stock, *string)
+	GetStockByProductAndCountry(*domain.Stock) error
+	SaveStock(*domain.Stock) error
+	UpdateStock(*domain.Stock) error
 }
 
 type stockRepository struct {
@@ -15,27 +16,22 @@ type stockRepository struct {
 }
 
 func NewStockRepository(db *gorm.DB) *stockRepository {
-	return &stockRepository{db}
+	return &stockRepository{
+		db: db,
+	}
 }
 
-func (sr *stockRepository) GetStockByProductAndCountry(stockTosearch *domain.Stock) (*domain.Stock, *string) {
-	var stock domain.Stock
-
-	err := sr.db.Debug().Where(stockTosearch).Take(&stock).Error
-
-	if err != nil {
-		errorMessage := err.Error()
-		return nil, &errorMessage
-	}
-
-	return &stock, nil
+func (repo *stockRepository) GetStockByProductAndCountry(stock *domain.Stock) error {
+	result := repo.db.First(stock, "country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID)
+	return result.Error
 }
 
-func (sr *stockRepository) UpdateStockCount(stockToUpdate *domain.Stock) (*domain.Stock, *string) {
-	result := sr.db.Model(&domain.Stock{}).Updates(stockToUpdate)
-	if result.Error != nil {
-		errorMessage := result.Error.Error()
-		return nil, &errorMessage
-	}
-	return stockToUpdate, nil
+func (repo *stockRepository) SaveStock(stock *domain.Stock) error {
+	result := repo.db.Create(stock)
+	return result.Error
+}
+
+func (repo *stockRepository) UpdateStock(stock *domain.Stock) error {
+	result := repo.db.Model(&domain.Stock{}).Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Updates(stock)
+	return result.Error
 }

@@ -1,15 +1,31 @@
 package product
 
-import "github.com/samuelemwangi/jumia-mds-test/services/products/domain"
+import (
+	"net/http"
 
-type ProductResponseDTO struct {
+	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
+)
+
+type ProductDetailDTO struct {
 	ID   uint   `json:"id"`
 	SKU  string `json:"sku"`
 	Name string `json:"productName"`
 }
 
-func (p *ProductResponseDTO) toResponseDTO(entity *domain.Product) {
-	p.ID = entity.ID
-	p.SKU = entity.SKU
-	p.Name = entity.Name
+type ProductResponseDTO struct {
+	Status  int               `json:"responseStatus"`
+	Message string            `json:"responseMessage"`
+	Item    *ProductDetailDTO `json:"itemDetails"`
+}
+
+func (response *ProductResponseDTO) toResponseDTO(entity *domain.Product) {
+
+	productDetail := &ProductDetailDTO{
+		ID:   entity.ID,
+		SKU:  entity.SKU,
+		Name: entity.Name,
+	}
+	response.Status = http.StatusOK
+	response.Message = "request successful"
+	response.Item = productDetail
 }

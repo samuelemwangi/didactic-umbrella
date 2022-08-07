@@ -36,19 +36,19 @@ func (service *stockService) SaveStock(countryId uint, productId uint, quantity 
 	// if no stock found, create new one
 	if err != nil && err.Error() == gorm.ErrRecordNotFound.Error() {
 
-		stock.Count = quantity
+		stock.Quantity = quantity
 
-		if stock.Count < 0 {
-			stock.Count = 0
+		if stock.Quantity < 0 {
+			stock.Quantity = 0
 		}
 
 		return service.stockRepo.SaveStock(stock)
 	}
 
 	// if stock found, update it
-	stock.Count = stock.Count + quantity
-	if stock.Count < 0 {
-		stock.Count = 0
+	stock.Quantity = stock.Quantity + quantity
+	if stock.Quantity < 0 {
+		stock.Quantity = 0
 	}
 
 	return service.stockRepo.UpdateStock(stock)

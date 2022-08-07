@@ -7,7 +7,7 @@ import (
 
 type ConsumeStockRequestDTO struct {
 	ProductID uint `validate:"required"`
-	Count     int  `validate:"required"`
+	Quantity  int  `validate:"required"`
 	CountryID uint `validate:"required"`
 }
 

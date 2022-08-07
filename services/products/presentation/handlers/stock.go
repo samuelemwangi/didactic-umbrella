@@ -5,13 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/errorhelper"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/stock"
 )
 
 type StockHandler struct {
 	stockService stock.StockService
-	errorService error.ErrorService
+	errorService errorhelper.ErrorService
 }
 
 func NewStockHandler(services *application.Services) *StockHandler {
@@ -21,16 +21,15 @@ func NewStockHandler(services *application.Services) *StockHandler {
 	}
 }
 
-func (sh *StockHandler) ConsumeStock(c *gin.Context) {
+func (handler *StockHandler) ConsumeStock(c *gin.Context) {
 	var consumeStockRequest stock.ConsumeStockRequestDTO
 
 	if err := c.BindJSON(&consumeStockRequest); err != nil {
-		response := sh.errorService.GetGeneralError(http.StatusBadRequest, err.Error())
+		response := handler.errorService.GetGeneralError(http.StatusBadRequest, err)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
-	updateResponse, errorResponse := sh.stockService.ConsumeStock(&consumeStockRequest)
+	updateResponse, errorResponse := handler.stockService.ConsumeStock(&consumeStockRequest)
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, errorResponse)

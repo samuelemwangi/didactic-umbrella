@@ -1,4 +1,4 @@
-package upload
+package uploadmetadata
 
 import (
 	"net/http"
@@ -6,20 +6,20 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 )
 
-type uploadDetailDTO struct {
-	UploadId string `json:"uploadId"`
+type uploadMetadataDetailDTO struct {
+	UploadID string `json:"uploadId"`
 	Status   string `json:"status"`
 }
 
 type UploadResponseDTO struct {
-	Status  int              `json:"responseStatus"`
-	Message string           `json:"responseMessage"`
-	Item    *uploadDetailDTO `json:"itemDetails"`
+	Status  int                      `json:"responseStatus"`
+	Message string                   `json:"responseMessage"`
+	Item    *uploadMetadataDetailDTO `json:"itemDetails"`
 }
 
-func (response *UploadResponseDTO) toResponseDTO(uploadMetadata *domain.FileUploadMetadata) {
-	uploadDetail := &uploadDetailDTO{
-		UploadId: uploadMetadata.UploadId,
+func (response *UploadResponseDTO) toResponseDTO(uploadMetadata *domain.UploadMetadata) {
+	uploadDetail := &uploadMetadataDetailDTO{
+		UploadID: uploadMetadata.UploadID,
 	}
 
 	uploadDetail.setStatusText(uploadMetadata)
@@ -29,7 +29,7 @@ func (response *UploadResponseDTO) toResponseDTO(uploadMetadata *domain.FileUplo
 	response.Item = uploadDetail
 }
 
-func (upload *uploadDetailDTO) setStatusText(uploadMetadata *domain.FileUploadMetadata) {
+func (upload *uploadMetadataDetailDTO) setStatusText(uploadMetadata *domain.UploadMetadata) {
 
 	switch uploadMetadata.ProcessedStatus {
 	case domain.UploadStatusUploaded:
@@ -40,6 +40,9 @@ func (upload *uploadDetailDTO) setStatusText(uploadMetadata *domain.FileUploadMe
 		return
 	case domain.UploadStatusProcessed:
 		upload.Status = "Processed"
+		return
+	case domain.UploadStatusProcessingAborted:
+		upload.Status = "Processing Aborted"
 		return
 	default:
 		upload.Status = "Unknown Status"

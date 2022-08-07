@@ -6,7 +6,7 @@ import (
 )
 
 type ProductRepository interface {
-	GetProductBySKU(sku string) (*domain.Product, *string)
+	GetProductBySKU(*domain.Product) error
 }
 
 type productRepository struct {
@@ -14,17 +14,12 @@ type productRepository struct {
 }
 
 func NewProductRepository(db *gorm.DB) *productRepository {
-	return &productRepository{db}
+	return &productRepository{
+		db: db,
+	}
 }
 
-func (pr *productRepository) GetProductBySKU(sku string) (*domain.Product, *string) {
-	var product domain.Product
-
-	err := pr.db.Debug().Where("sku=?", sku).Take(&product).Error
-	if err != nil {
-		errorMessage := err.Error()
-		return nil, &errorMessage
-	}
-
-	return &product, nil
+func (repo *productRepository) GetProductBySKU(product *domain.Product) error {
+	result := repo.db.First(product, "sku = ?", product.SKU)
+	return result.Error
 }

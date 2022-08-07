@@ -1,10 +1,10 @@
-package error
+package errorhelper
 
 import "strings"
 
 type ErrorService interface {
-	GetValidationError(int, string, map[string]string) *ErrorResponseDTO
-	GetGeneralError(int, string) *ErrorResponseDTO
+	GetValidationError(int, map[string]string) *ErrorResponseDTO
+	GetGeneralError(int, error) *ErrorResponseDTO
 }
 
 type errorService struct {
@@ -14,7 +14,7 @@ func NewErrorService() *errorService {
 	return &errorService{}
 }
 
-func (es *errorService) GetValidationError(status int, message string, validationErrors map[string]string) *ErrorResponseDTO {
+func (es *errorService) GetValidationError(status int, validationErrors map[string]string) *ErrorResponseDTO {
 
 	errorMessage := ""
 
@@ -28,14 +28,14 @@ func (es *errorService) GetValidationError(status int, message string, validatio
 
 	return &ErrorResponseDTO{
 		Status:  status,
-		Message: message,
+		Message: "request validation failed",
 		Error:   errorDetails,
 	}
 }
 
-func (es *errorService) GetGeneralError(status int, message string) *ErrorResponseDTO {
+func (es *errorService) GetGeneralError(status int, err error) *ErrorResponseDTO {
 	errorDetails := &ErrorDetail{
-		ErrorMessage: message,
+		ErrorMessage: err.Error(),
 	}
 
 	return &ErrorResponseDTO{

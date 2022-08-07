@@ -5,28 +5,28 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 )
 
-type UploadRepository interface {
+type UploadMetadataRepository interface {
 	GetUploadByUploadId(*domain.UploadMetadata) error
 	UpdateUploadStatus(*domain.UploadMetadata) error
 }
 
-type uploadRepository struct {
+type uploadMetadataRepository struct {
 	db *gorm.DB
 }
 
-func NewUploadRepository(db *gorm.DB) *uploadRepository {
-	return &uploadRepository{
+func NewUploadMetadataRepository(db *gorm.DB) *uploadMetadataRepository {
+	return &uploadMetadataRepository{
 		db: db,
 	}
 }
 
-func (repo *uploadRepository) GetUploadByUploadId(upload *domain.UploadMetadata) error {
+func (repo *uploadMetadataRepository) GetUploadByUploadId(upload *domain.UploadMetadata) error {
 	result := repo.db.First(upload, "upload_id = ?", upload.UploadID)
 	return result.Error
 
 }
 
-func (repo *uploadRepository) UpdateUploadStatus(upload *domain.UploadMetadata) error {
+func (repo *uploadMetadataRepository) UpdateUploadStatus(upload *domain.UploadMetadata) error {
 	result := repo.db.Model(&domain.UploadMetadata{}).Where("upload_id = ?", upload.UploadID).Updates(upload)
 	return result.Error
 }

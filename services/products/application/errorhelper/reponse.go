@@ -1,4 +1,4 @@
-package error
+package errorhelper
 
 type ErrorDetail struct {
 	ErrorMessage string `json:"errorMessage"`

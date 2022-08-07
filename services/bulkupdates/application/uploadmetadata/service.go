@@ -19,22 +19,22 @@ type UploadMetadataService interface {
 }
 
 type uploadMetadataService struct {
-	uploadRepo     repositories.UploadRepository
-	csvReader      fileutils.CSVReader
-	countryService country.CountryService
-	productService product.ProductService
-	stockService   stock.StockService
-	uploadMetadata *domain.UploadMetadata
+	uploadMetdataRepo repositories.UploadMetadataRepository
+	csvReader         fileutils.CSVReader
+	countryService    country.CountryService
+	productService    product.ProductService
+	stockService      stock.StockService
+	uploadMetadata    *domain.UploadMetadata
 }
 
 func NewUploadMetadataService(repos *persistence.Repositories) *uploadMetadataService {
 	return &uploadMetadataService{
-		uploadRepo:     repos.UploadRepo,
-		csvReader:      fileutils.NewCSVReader(),
-		countryService: country.NewCountryService(repos),
-		productService: product.NewProductService(repos),
-		stockService:   stock.NewStockService(repos),
-		uploadMetadata: &domain.UploadMetadata{},
+		uploadMetdataRepo: repos.UploadMetdataRepo,
+		csvReader:         fileutils.NewCSVReader(),
+		countryService:    country.NewCountryService(repos),
+		productService:    product.NewProductService(repos),
+		stockService:      stock.NewStockService(repos),
+		uploadMetadata:    &domain.UploadMetadata{},
 	}
 }
 
@@ -43,7 +43,7 @@ func (service *uploadMetadataService) ProcessUpload(filePath, uploadId string) e
 	service.uploadMetadata.UploadID = uploadId
 
 	// check if upload has been processed
-	err := service.uploadRepo.GetUploadByUploadId(service.uploadMetadata)
+	err := service.uploadMetdataRepo.GetUploadByUploadId(service.uploadMetadata)
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func (service *uploadMetadataService) ManageUpdateUploadStatus(status uint, tota
 	service.uploadMetadata.ProcessedStatus = status
 	service.uploadMetadata.TotalItems = total
 	service.uploadMetadata.TotalItemsProcesed = processed
-	err := service.uploadRepo.UpdateUploadStatus(service.uploadMetadata)
+	err := service.uploadMetdataRepo.UpdateUploadStatus(service.uploadMetadata)
 
 	if err != nil {
 		return err

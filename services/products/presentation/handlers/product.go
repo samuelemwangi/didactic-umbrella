@@ -18,15 +18,17 @@ func NewProductHandler(services *application.Services) *ProductHandler {
 	}
 }
 
-func (ph *ProductHandler) GetProductBySKU(c *gin.Context) {
+func (handler *ProductHandler) GetProductBySKU(c *gin.Context) {
 	sku := c.Param("sku")
 
-	productResponse, errorResponse := ph.productService.GetProductBySKU(sku)
+	productRequest := &product.ProductRequestDTO{
+		SKU: sku,
+	}
+	productResponse, errorResponse := handler.productService.GetProductBySKU(productRequest)
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
-
 	c.JSON(http.StatusOK, productResponse)
 }

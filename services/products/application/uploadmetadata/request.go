@@ -1,17 +1,17 @@
-package upload
+package uploadmetadata
 
 import "github.com/samuelemwangi/jumia-mds-test/services/products/domain"
 
 type UploadMetadataDTO struct {
 	FileName string
-	UploadId string
+	UploadID string
 }
 
-func (request *UploadMetadataDTO) toEntity() *domain.FileUploadMetadata {
+func (request *UploadMetadataDTO) toEntity() *domain.UploadMetadata {
 
-	return &domain.FileUploadMetadata{
+	return &domain.UploadMetadata{
 		FileName:        request.FileName,
-		UploadId:        request.UploadId,
+		UploadID:        request.UploadID,
 		ProcessedStatus: domain.UploadStatusUploaded,
 	}
 }
