@@ -6,7 +6,13 @@ import (
 )
 
 type CountryRequestDTO struct {
-	CountryName string `validate:"required"`
+	CountryCode string `validate:"required"`
+}
+
+func (request *CountryRequestDTO) toEntity() *domain.Country {
+	return &domain.Country{
+		Code: request.CountryCode,
+	}
 }
 
 func (request *CountryRequestDTO) validateRequest() map[string]string {
@@ -21,10 +27,4 @@ func (request *CountryRequestDTO) validateRequest() map[string]string {
 		errors[err.Field()] = err.ActualTag()
 	}
 	return errors
-}
-
-func (request *CountryRequestDTO) toEntity() *domain.Country {
-	return &domain.Country{
-		Name: request.CountryName,
-	}
 }

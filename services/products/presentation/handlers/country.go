@@ -18,7 +18,7 @@ func NewCountryHandler(services *application.Services) *CountryHandler {
 	}
 }
 
-func (ch *CountryHandler) SaveCountry(c *gin.Context) {
+func (handler *CountryHandler) SaveCountry(c *gin.Context) {
 	var countryRequest country.CountryRequestDTO
 
 	if err := c.BindJSON(&countryRequest); err != nil {
@@ -26,7 +26,7 @@ func (ch *CountryHandler) SaveCountry(c *gin.Context) {
 		return
 	}
 
-	savedCountry, savingError := ch.countryService.SaveCountry(&countryRequest)
+	savedCountry, savingError := handler.countryService.SaveCountry(&countryRequest)
 
 	if savingError != nil {
 		c.JSON(savingError.Status, savingError)
@@ -37,4 +37,14 @@ func (ch *CountryHandler) SaveCountry(c *gin.Context) {
 
 	c.JSON(savedCountry.Status, savedCountry)
 
+}
+
+func (handler *CountryHandler) GetCountries(c *gin.Context) {
+	countries, errorResponse := handler.countryService.GetCountries()
+
+	if errorResponse != nil {
+		c.JSON(errorResponse.Status, errorResponse)
+		return
+	}
+	c.JSON(http.StatusOK, countries)
 }

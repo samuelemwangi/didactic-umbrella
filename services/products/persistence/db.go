@@ -33,7 +33,7 @@ func AutoMigrateDB(db *gorm.DB) {
 	db.AutoMigrate(&domain.Country{})
 	db.AutoMigrate(&domain.Product{})
 	db.AutoMigrate(&domain.Stock{})
-	db.AutoMigrate(&domain.FileUploadMetadata{})
+	db.AutoMigrate(&domain.UploadMetadata{})
 	db.Model(&domain.Stock{}).AddForeignKey("country_id", "countries(id)", "RESTRICT", "RESTRICT")
 	db.Model(&domain.Stock{}).AddForeignKey("product_id", "products(id)", "RESTRICT", "RESTRICT")
 }

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"log"
+	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,19 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/upload"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/errorhelper"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/uploadmetadata"
 )
 
 type UploadHandler struct {
-	uploadService upload.UploadService
-	errorService  error.ErrorService
+	uploadMetadataService uploadmetadata.UploadMetadataService
+	errorService          errorhelper.ErrorService
 }
 
 func NewUploadHandler(services *application.Services) *UploadHandler {
 	return &UploadHandler{
-		uploadService: services.UploadService,
-		errorService:  services.ErrorService,
+		uploadMetadataService: services.UploadMetadataService,
+		errorService:          services.ErrorService,
 	}
 }
 
@@ -31,36 +31,38 @@ func (handler *UploadHandler) UploadCSVFile(c *gin.Context) {
 
 	// validate inputs
 	if err != nil {
-		errorResponse := handler.errorService.GetGeneralError(http.StatusBadRequest, err.Error())
+		errorResponse := handler.errorService.GetGeneralError(http.StatusBadRequest, err)
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
 
 	extension := filepath.Ext(file.Filename)
 
-	if !strings.Contains(strings.ToLower(extension), "csv") {
-		errorResponse := handler.errorService.GetGeneralError(http.StatusBadRequest, "file not supported. kindly upload a csv file")
+	if strings.ToLower(extension) != ".csv" {
+		err = errors.New("file not supported. kindly upload a csv file")
+		errorResponse := handler.errorService.GetGeneralError(http.StatusBadRequest, err)
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
 
 	// upload file
-	fileId := uuid.New().String() + extension
+	uploadID := uuid.New().String()
 
 	uploadPath := ensureUploadDirectoryExists()
 
-	if err := c.SaveUploadedFile(file, uploadPath+fileId); err != nil {
-		log.Fatalln(err.Error())
-		errorResponse := handler.errorService.GetGeneralError(http.StatusInternalServerError, "file upload failed. kindly retry")
+	if err := c.SaveUploadedFile(file, uploadPath+"/"+uploadID+extension); err != nil {
+		err = errors.New("file upload failed. kindly retry")
+		errorResponse := handler.errorService.GetGeneralError(http.StatusInternalServerError, err)
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
 
-	uploadrequest := upload.UploadMetadataDTO{
-		UploadId: fileId,
+	uploadrequest := uploadmetadata.UploadMetadataDTO{
+		FileName: file.Filename,
+		UploadID: uploadID,
 	}
 
-	updateResponse, errorResponse := handler.uploadService.SaveUploadMetadaData(&uploadrequest)
+	updateResponse, errorResponse := handler.uploadMetadataService.SaveUploadMetadaData(&uploadrequest)
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, errorResponse)

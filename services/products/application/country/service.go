@@ -3,43 +3,62 @@ package country
 import (
 	"net/http"
 
-	"github.com/samuelemwangi/jumia-mds-test/services/products/application/error"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/application/errorhelper"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence/repositories"
 )
 
 type CountryService interface {
-	SaveCountry(*CountryRequestDTO) (*CountryResponseDTO, *error.ErrorResponseDTO)
+	SaveCountry(*CountryRequestDTO) (*CountryResponseDTO, *errorhelper.ErrorResponseDTO)
+	GetCountries() (*CountriesResponseDTO, *errorhelper.ErrorResponseDTO)
 }
 
 type countryService struct {
 	countryRepo  repositories.CountryRepository
-	errorService error.ErrorService
+	errorService errorhelper.ErrorService
 }
 
 func NewCountryService(repos *persistence.Repositories) *countryService {
 	return &countryService{
 		countryRepo:  repos.CountryRepo,
-		errorService: error.NewErrorService(),
+		errorService: errorhelper.NewErrorService(),
 	}
 }
 
-func (cs *countryService) SaveCountry(countryRequest *CountryRequestDTO) (*CountryResponseDTO, *error.ErrorResponseDTO) {
+func (service *countryService) SaveCountry(countryRequest *CountryRequestDTO) (*CountryResponseDTO, *errorhelper.ErrorResponseDTO) {
 
+	// validate request
 	validationErrors := countryRequest.validateRequest()
 
 	if len(validationErrors) > 0 {
-		return nil, cs.errorService.GetValidationError(http.StatusBadRequest, "validation errors occured", validationErrors)
+		return nil, service.errorService.GetValidationError(http.StatusBadRequest, validationErrors)
 	}
 
-	data, dbError := cs.countryRepo.SaveCountry(countryRequest.toEntity())
+	// create item
+	country := countryRequest.toEntity()
+	dbError := service.countryRepo.SaveCountry(country)
 
 	if dbError != nil {
-		return nil, cs.errorService.GetGeneralError(http.StatusUnprocessableEntity, *dbError)
+		return nil, service.errorService.GetGeneralError(http.StatusInternalServerError, dbError)
 
 	}
-	countryResponse := CountryResponseDTO{}
-	countryResponse.toResponseDTO(data)
+	var countryResponse CountryResponseDTO
+	countryResponse.toCountryResponseDTO(country)
 
 	return &countryResponse, nil
+}
+
+func (service *countryService) GetCountries() (*CountriesResponseDTO, *errorhelper.ErrorResponseDTO) {
+
+	// get items
+	countries, dbError := service.countryRepo.GetCountries()
+
+	if dbError != nil {
+		return nil, service.errorService.GetGeneralError(http.StatusInternalServerError, dbError)
+	}
+
+	var countriesResponse CountriesResponseDTO
+	countriesResponse.toCountriesResponseDTO(countries)
+
+	return &countriesResponse, nil
 }
