@@ -1,9 +1,11 @@
 package queueing
 
 import (
+	"context"
+	"log"
 	"os"
 
-	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
+	"github.com/segmentio/kafka-go"
 )
 
 type KafkaProducer interface {
@@ -25,18 +27,18 @@ func NewKafkaProducer() *kafkaProducer {
 }
 
 func (kafkaPproducer *kafkaProducer) ProduceMessage(topic string, message string) {
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaPproducer.bootStrapServer})
-	if err != nil {
-		return
+	w := &kafka.Writer{
+		Addr:                   kafka.TCP(kafkaPproducer.bootStrapServer),
+		Topic:                  topic,
+		Balancer:               &kafka.LeastBytes{},
+		AllowAutoTopicCreation: true,
 	}
-
-	defer p.Close()
-
-	p.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic},
-		Value:          []byte(message),
-	}, nil)
-
-	p.Flush(15 * 1000)
+	err := w.WriteMessages(context.Background(), kafka.Message{Value: []byte(message)})
+	if err != nil {
+		log.Println()
+		log.Println(err)
+		log.Println()
+	}
+	w.Close()
 
 }
