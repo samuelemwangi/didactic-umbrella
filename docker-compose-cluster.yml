@@ -8,8 +8,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     volumes:
-      - "./mounts/zookeeper-1/data:/var/lib/zookeeper/data"
-      - "./mounts/zookeeper-1/logs:/var/lib/zookeeper/log"
+      - "./cluster-mounts/zookeeper-1/data:/var/lib/zookeeper/data"
+      - "./cluster-mounts/zookeeper-1/logs:/var/lib/zookeeper/log"
     networks:
       - services_network
     restart: on-failure
@@ -29,7 +29,7 @@ services:
     ports:
       - 29092:29092
     volumes:
-      - "./mounts/kafka-1/data:/var/lib/kafka/data"
+      - "./cluster-mounts/kafka-1/data:/var/lib/kafka/data"
     networks:
       - services_network
     restart: on-failure
@@ -64,9 +64,9 @@ services:
       MYSQL_USER: test_user
       MYSQL_PASSWORD: testP@ssw0rd
     ports:
-      - 3306:3306
+      - 3307:3306
     volumes:
-      - "./mounts/mysql-db/data:/var/lib/mysql"
+      - "./cluster-mounts/mysql-db/data:/var/lib/mysql"
     networks:
       - services_network
     restart: on-failure
