@@ -57,5 +57,5 @@ services:
 
 networks:
   services_network:
-    name: test_services_network
+    name: internal_services_network
     driver: bridge

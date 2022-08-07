@@ -1,4 +1,4 @@
-package uploadmetadata
+package uploadprocess
 
 import (
 	"errors"
@@ -13,12 +13,12 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 )
 
-type UploadMetadataService interface {
+type UploadProcessorService interface {
 	ProcessUpload(string, string) error
 	ProcessFileData([][]string) error
 }
 
-type uploadMetadataService struct {
+type uploadProcessorService struct {
 	uploadMetdataRepo repositories.UploadMetadataRepository
 	csvReader         fileutils.CSVReader
 	countryService    country.CountryService
@@ -27,8 +27,8 @@ type uploadMetadataService struct {
 	uploadMetadata    *domain.UploadMetadata
 }
 
-func NewUploadMetadataService(repos *persistence.Repositories) *uploadMetadataService {
-	return &uploadMetadataService{
+func NewUploadProcessorService(repos *persistence.Repositories) *uploadProcessorService {
+	return &uploadProcessorService{
 		uploadMetdataRepo: repos.UploadMetdataRepo,
 		csvReader:         fileutils.NewCSVReader(),
 		countryService:    country.NewCountryService(repos),
@@ -38,7 +38,7 @@ func NewUploadMetadataService(repos *persistence.Repositories) *uploadMetadataSe
 	}
 }
 
-func (service *uploadMetadataService) ProcessUpload(filePath, uploadId string) error {
+func (service *uploadProcessorService) ProcessUpload(filePath, uploadId string) error {
 	// assign upload id to upload metadata
 	service.uploadMetadata.UploadID = uploadId
 	// ensure this is zero when reading to avoid filtering by this value
@@ -67,7 +67,7 @@ func (service *uploadMetadataService) ProcessUpload(filePath, uploadId string) e
 	return service.ProcessFileData(data)
 }
 
-func (service *uploadMetadataService) ProcessFileData(data [][]string) error {
+func (service *uploadProcessorService) ProcessFileData(data [][]string) error {
 
 	processingError := errors.New("")
 	countRecords := 0
@@ -104,9 +104,6 @@ func (service *uploadMetadataService) ProcessFileData(data [][]string) error {
 			}
 
 			countRecords++
-
-			// comment out later to process all records
-			break
 		}
 	}
 
@@ -120,7 +117,7 @@ func (service *uploadMetadataService) ProcessFileData(data [][]string) error {
 
 }
 
-func (service *uploadMetadataService) ManageUpdateUploadStatus(status uint, total uint, processed uint) error {
+func (service *uploadProcessorService) ManageUpdateUploadStatus(status uint, total uint, processed uint) error {
 
 	service.uploadMetadata.ProcessedStatus = status
 	service.uploadMetadata.TotalItems = total
