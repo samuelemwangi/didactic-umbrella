@@ -27,8 +27,8 @@ Two services have been implemented; [products](https://github.com/samuelemwangi/
 1. `git clone` the source code repository
 2. Ensure [golang](https://go.dev/doc/install) is installed on your machine. 
 3. Ensure you have a [kafka](https://kafka.apache.org/documentation/#quickstart) and a [mysql](https://www.mysql.com/products/workbench/) database running. (you can run  `docker-compose -f docker-compose-cluster.yml up -d` to start them locally if you have [docker](https://docs.docker.com/engine/install/) installed)
-4.  Rename the `example.env` file to `env.env`
-5.  Update the environment variables in the `env.env` file with the appropriate values.
+4.  Rename the `example.env` file to `.env`
+5.  Update the environment variables in the `.env` file with the appropriate values.
 6.  `cd` to the `services/products` directory and run `go run main.go`
 7.  `cd` to the `services/bulkupdates` directory and run `go run main.go`
 8.  Import `postman-collection.json` on [Postman](https://www.postman.com/downloads/) and test the endpoints as follows: 
