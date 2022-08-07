@@ -2,20 +2,23 @@ package uploadprocess
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/country"
+	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/errorhelper"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/product"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/stock"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/infrastructure/fileutils"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
+	"gorm.io/gorm"
 )
 
 type UploadProcessorService interface {
 	ProcessUpload(string, string) error
-	ProcessFileData([][]string) error
+	GetProcessingStatus(*UploadProcessRequestDTO) (*UploadProcessResponseDTO, *errorhelper.ErrorResponseDTO)
 }
 
 type uploadProcessorService struct {
@@ -24,6 +27,7 @@ type uploadProcessorService struct {
 	countryService    country.CountryService
 	productService    product.ProductService
 	stockService      stock.StockService
+	errorService      errorhelper.ErrorService
 	uploadMetadata    *domain.UploadMetadata
 }
 
@@ -34,8 +38,35 @@ func NewUploadProcessorService(repos *persistence.Repositories) *uploadProcessor
 		countryService:    country.NewCountryService(repos),
 		productService:    product.NewProductService(repos),
 		stockService:      stock.NewStockService(repos),
+		errorService:      errorhelper.NewErrorService(),
 		uploadMetadata:    &domain.UploadMetadata{},
 	}
+}
+
+func (service *uploadProcessorService) GetProcessingStatus(requesst *UploadProcessRequestDTO) (*UploadProcessResponseDTO, *errorhelper.ErrorResponseDTO) {
+	// validate request
+	validationErrors := requesst.validateRequest()
+
+	if len(validationErrors) > 0 {
+		return nil, service.errorService.GetValidationError(http.StatusBadRequest, validationErrors)
+	}
+
+	uploadMetadata := requesst.toEntity()
+	dbError := service.uploadMetdataRepo.GetUploadByUploadId(uploadMetadata)
+
+	// handle errors
+	if dbError != nil {
+		status := http.StatusInternalServerError
+		if dbError.Error() == gorm.ErrRecordNotFound.Error() {
+			status = http.StatusNotFound
+		}
+		return nil, service.errorService.GetGeneralError(status, dbError)
+	}
+
+	// prepare response
+	var responseDTO UploadProcessResponseDTO
+	responseDTO.toResponseDTO(uploadMetadata)
+	return &responseDTO, nil
 }
 
 func (service *uploadProcessorService) ProcessUpload(filePath, uploadId string) error {
@@ -61,13 +92,13 @@ func (service *uploadProcessorService) ProcessUpload(filePath, uploadId string) 
 	}
 
 	// indicate we have started processing the file
-	service.ManageUpdateUploadStatus(domain.UploadStatusProcessing, uint(len(data)), 0)
+	service.manageUpdateUploadStatus(domain.UploadStatusProcessing, uint(len(data)), 0)
 
 	// process the read file data
-	return service.ProcessFileData(data)
+	return service.processFileData(data)
 }
 
-func (service *uploadProcessorService) ProcessFileData(data [][]string) error {
+func (service *uploadProcessorService) processFileData(data [][]string) error {
 
 	processingError := errors.New("")
 	countRecords := 0
@@ -108,16 +139,16 @@ func (service *uploadProcessorService) ProcessFileData(data [][]string) error {
 	}
 
 	if processingError.Error() != "" {
-		service.ManageUpdateUploadStatus(domain.UploadStatusProcessingAborted, uint(len(data)), uint(countRecords))
+		service.manageUpdateUploadStatus(domain.UploadStatusProcessingAborted, uint(len(data)), uint(countRecords))
 		return processingError
 	} else {
-		service.ManageUpdateUploadStatus(domain.UploadStatusProcessed, uint(len(data)), uint(countRecords))
+		service.manageUpdateUploadStatus(domain.UploadStatusProcessed, uint(len(data)), uint(countRecords))
 		return nil
 	}
 
 }
 
-func (service *uploadProcessorService) ManageUpdateUploadStatus(status uint, total uint, processed uint) error {
+func (service *uploadProcessorService) manageUpdateUploadStatus(status uint, total uint, processed uint) error {
 
 	service.uploadMetadata.ProcessedStatus = status
 	//  we ignore the 1st line

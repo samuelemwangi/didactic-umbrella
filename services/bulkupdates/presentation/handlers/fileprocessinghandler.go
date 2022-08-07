@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/country"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/application/product"
@@ -28,6 +30,22 @@ func NewFileProcessingHandler(services *application.Services) *FileProcessingHan
 		UploadProcessorService: services.UploadProcessorService,
 		kafkaConsumer:          queueing.NewKafkaConsumer(),
 	}
+}
+
+func (handler *FileProcessingHandler) GetProcessingStatus(c *gin.Context) {
+	uploadId := c.Param("uploadId")
+	uploadRequest := &uploadprocess.UploadProcessRequestDTO{
+		UploadID: uploadId,
+	}
+
+	response, errorResponse := handler.UploadProcessorService.GetProcessingStatus(uploadRequest)
+	if errorResponse != nil {
+		c.JSON(errorResponse.Status, errorResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+
 }
 
 func (handler *FileProcessingHandler) ProcessFile() {
