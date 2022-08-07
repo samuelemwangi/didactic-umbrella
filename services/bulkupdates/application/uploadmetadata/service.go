@@ -41,6 +41,8 @@ func NewUploadMetadataService(repos *persistence.Repositories) *uploadMetadataSe
 func (service *uploadMetadataService) ProcessUpload(filePath, uploadId string) error {
 	// assign upload id to upload metadata
 	service.uploadMetadata.UploadID = uploadId
+	// ensure this is zero when reading to avoid filtering by this value
+	service.uploadMetadata.ID = 0
 
 	// check if upload has been processed
 	err := service.uploadMetdataRepo.GetUploadByUploadId(service.uploadMetadata)
