@@ -5,12 +5,15 @@ multiple countries. Each product can then have different stock per country.
 
 ### Requirements 
   1. Provide a products API
-   a). Get a product by SKU
-   b). Consume stock from a product. 
-      - Should validate if the stock requested is available first, and then decrease it.
+   
+            a). Get a product by SKU
+            b). Consume stock from a product. 
+                - Should validate if the stock requested is available first, and then decrease it.
+  
   2. Provide an API that allows a bulk update of products from a CSV.
-    a). For each CSV line, the stock update could be positive or negative
-    b). If a product doesn’t exist, it should be created.
+        
+            a). For each CSV line, the stock update could be positive or negative
+            b). If a product doesn’t exist, it should be created.
 
 
 ### Implementation Approach
