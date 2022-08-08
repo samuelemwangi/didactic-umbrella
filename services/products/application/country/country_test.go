@@ -24,8 +24,8 @@ func TestCountryRequestToEntity(t *testing.T) {
 	)
 }
 
-func TestCountryRequestValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method", func(t *testing.T) {
+func TestInvalidCountryRequestValidateRequest(t *testing.T) {
+	t.Run("Test validateRequest() method with an invalid request", func(t *testing.T) {
 		countryRequest := CountryRequestDTO{
 			CountryCode: "",
 		}
@@ -34,6 +34,25 @@ func TestCountryRequestValidateRequest(t *testing.T) {
 
 		if len(errors) != 1 {
 			t.Errorf("Expected 1 error, got %d", len(errors))
+		}
+
+		if errors["CountryCode"] != "required" {
+			t.Errorf("Expected error to be required, got %s", errors["CountryCode"])
+		}
+	},
+	)
+}
+
+func TestValidCountryRequestValidateRequest(t *testing.T) {
+	t.Run("Test validateRequest() method with a valid request", func(t *testing.T) {
+		countryRequest := CountryRequestDTO{
+			CountryCode: "KE",
+		}
+
+		errors := countryRequest.validateRequest()
+
+		if len(errors) != 0 {
+			t.Errorf("Expected 0 error, got %d", len(errors))
 		}
 	},
 	)
