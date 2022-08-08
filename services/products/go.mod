@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.4.0
@@ -32,7 +33,6 @@ require (
 	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
