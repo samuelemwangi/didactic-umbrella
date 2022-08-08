@@ -34,8 +34,12 @@ func (es *errorService) GetValidationError(status int, validationErrors map[stri
 }
 
 func (es *errorService) GetGeneralError(status int, err error) *ErrorResponseDTO {
+	errorMessage := "a system error has occurred"
+	if err != nil {
+		errorMessage = err.Error()
+	}
 	errorDetails := &errorDetail{
-		ErrorMessage: err.Error(),
+		ErrorMessage: errorMessage,
 	}
 
 	return &ErrorResponseDTO{
