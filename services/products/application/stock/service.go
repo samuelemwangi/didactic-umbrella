@@ -70,7 +70,7 @@ func (service *stockService) ConsumeStock(request *ConsumeStockRequestDTO) (*Con
 
 	// prepare response
 	var consumeStockResponse ConsumeStockResponseDTO
-	consumeStockResponse.toResponseDTO(stock)
+	consumeStockResponse.toConsumeStockResponseDTO(stock)
 
 	return &consumeStockResponse, nil
 

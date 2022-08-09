@@ -19,7 +19,7 @@ type ConsumeStockResponseDTO struct {
 	Item    *consumeStockDetailDTO `json:"itemDetails"`
 }
 
-func (response *ConsumeStockResponseDTO) toResponseDTO(stock *domain.Stock) {
+func (response *ConsumeStockResponseDTO) toConsumeStockResponseDTO(stock *domain.Stock) {
 	stockDetail := &consumeStockDetailDTO{
 		ID:              stock.ID,
 		QuantityBalance: stock.Quantity,

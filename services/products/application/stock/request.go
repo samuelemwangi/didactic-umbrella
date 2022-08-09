@@ -7,7 +7,7 @@ import (
 
 type ConsumeStockRequestDTO struct {
 	ProductID uint `validate:"required"`
-	Quantity  int  `validate:"required"`
+	Quantity  int  `validate:"required,gte=1"`
 	CountryID uint `validate:"required"`
 }
 
@@ -27,7 +27,11 @@ func (request *ConsumeStockRequestDTO) validateRequest() map[string]string {
 	}
 
 	for _, err := range err.(validator.ValidationErrors) {
-		errors[err.Field()] = err.ActualTag()
+		if err.Tag() == "gte" {
+			errors[err.Field()] = "must be greater than or equal to 1"
+		} else {
+			errors[err.Field()] = err.ActualTag()
+		}
 	}
 	return errors
 }
