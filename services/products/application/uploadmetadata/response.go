@@ -10,7 +10,7 @@ type uploadDetailDTO struct {
 	UploadID         string `json:"uploadId"`
 	UploadedFileName string `json:"uploadedFileName"`
 	ProcessingStatus string `json:"processingStatus"`
-	CreatedAt        string `json:"uploadedAt"`
+	CreatedAt        string `json:"createdAt"`
 }
 
 type UploadResponseDTO struct {
@@ -19,7 +19,7 @@ type UploadResponseDTO struct {
 	Item    *uploadDetailDTO `json:"itemDetails"`
 }
 
-func (response *UploadResponseDTO) toResponseDTO(entity *domain.UploadMetadata) {
+func (response *UploadResponseDTO) toUploadResponseDTO(entity *domain.UploadMetadata) {
 
 	uploadDetails := &uploadDetailDTO{
 		UploadID:         entity.UploadID,

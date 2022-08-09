@@ -1,6 +1,7 @@
 package stock
 
 import (
+	"net/http"
 	"strings"
 	"testing"
 
@@ -87,6 +88,14 @@ func TestStockResponseToDTO(t *testing.T) {
 
 		consumeStockResponse := ConsumeStockResponseDTO{}
 		consumeStockResponse.toConsumeStockResponseDTO(stock)
+
+		if consumeStockResponse.Status != http.StatusOK {
+			t.Errorf("Expected status to be 200, got %d", consumeStockResponse.Status)
+		}
+
+		if consumeStockResponse.Message != "request successful" {
+			t.Errorf("Expected message to be request successful, got %s", consumeStockResponse.Message)
+		}
 
 		if consumeStockResponse.Item.QuantityBalance != stock.Quantity {
 			t.Errorf("Expected Quantity balance to be %d, got %d", stock.Quantity, consumeStockResponse.Item.QuantityBalance)
