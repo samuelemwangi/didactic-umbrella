@@ -7,8 +7,7 @@ import (
 	"testing"
 )
 
-// ============================= Test service.go
-
+// ================================= Test service.go =================================
 func TestErrorServiceGetValidationError(t *testing.T) {
 	errorService := NewErrorService()
 
@@ -80,7 +79,7 @@ func TestErrorServiceGetValidationError(t *testing.T) {
 
 func TestErrorServiceGetGeneralError(t *testing.T) {
 	// Non-nil error
-	t.Run("Test GetGeneralError() method - Non-nil error", func(t *testing.T) {
+	t.Run("Test GetGeneralError() method - Non nil error", func(t *testing.T) {
 		errorService := NewErrorService()
 
 		err := errors.New("error message")

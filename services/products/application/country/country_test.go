@@ -20,12 +20,12 @@ func TestCountryRequestToEntity(t *testing.T) {
 		if country.Code != "KE" {
 			t.Errorf("Expected country code to be KE, got %s", country.Code)
 		}
-	},
-	)
+	})
 }
 
-func TestInvalidCountryRequestValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with an invalid request", func(t *testing.T) {
+func TestCountryRequestValidateRequest(t *testing.T) {
+	// Invalid request
+	t.Run("Test validateRequest() method - Invalid request", func(t *testing.T) {
 		countryRequest := CountryRequestDTO{
 			CountryCode: "",
 		}
@@ -39,12 +39,10 @@ func TestInvalidCountryRequestValidateRequest(t *testing.T) {
 		if errors["CountryCode"] != "required" {
 			t.Errorf("Expected error to be required, got %s", errors["CountryCode"])
 		}
-	},
-	)
-}
+	})
 
-func TestValidCountryRequestValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with a valid request", func(t *testing.T) {
+	// Valid request
+	t.Run("Test validateRequest() method - Valid request", func(t *testing.T) {
 		countryRequest := CountryRequestDTO{
 			CountryCode: "KE",
 		}
@@ -54,8 +52,7 @@ func TestValidCountryRequestValidateRequest(t *testing.T) {
 		if len(errors) != 0 {
 			t.Errorf("Expected 0 error, got %d", len(errors))
 		}
-	},
-	)
+	})
 }
 
 // ============================= Test service.go
@@ -98,8 +95,7 @@ func TestCountryResponseToDTO(t *testing.T) {
 			t.Errorf("Expected updated at to be set, got %s", countryResponse.Item.UpdatedAt)
 		}
 
-	},
-	)
+	})
 }
 
 func TestCountriesResponseToDTO(t *testing.T) {
@@ -136,6 +132,5 @@ func TestCountriesResponseToDTO(t *testing.T) {
 			t.Errorf("Expected country code to be UG, got %s", countriesResponse.Items[1].CountryCode)
 		}
 
-	},
-	)
+	})
 }

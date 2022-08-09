@@ -20,12 +20,12 @@ func TestProductRequestDTOToEntity(t *testing.T) {
 		if product.SKU != "123H" {
 			t.Errorf("Expected SKU to be 123, got %s", product.SKU)
 		}
-	},
-	)
+	})
 }
 
-func TestInvalidProductRequestDTOValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with an invalid request", func(t *testing.T) {
+func TestProductRequestDTOValidateRequest(t *testing.T) {
+	// Invalid request
+	t.Run("Test validateRequest() method - Invalid request", func(t *testing.T) {
 		request := ProductRequestDTO{
 			SKU: "",
 		}
@@ -38,12 +38,10 @@ func TestInvalidProductRequestDTOValidateRequest(t *testing.T) {
 		if errors["SKU"] != "required" {
 			t.Errorf("Expected error message to be required, got %s", errors["SKU"])
 		}
-	},
-	)
-}
+	})
 
-func TestValidProductRequestDTOValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with a valid request", func(t *testing.T) {
+	// Valid request
+	t.Run("Test validateRequest() method  - Valid request", func(t *testing.T) {
 		request := ProductRequestDTO{
 			SKU: "123H",
 		}
@@ -52,8 +50,7 @@ func TestValidProductRequestDTOValidateRequest(t *testing.T) {
 		if len(errors) != 0 {
 			t.Errorf("Expected 0 error, got %d", len(errors))
 		}
-	},
-	)
+	})
 }
 
 // ============================= Test service.go
@@ -103,8 +100,7 @@ func TestProductResponseToDTO(t *testing.T) {
 		if productResponse.Item.UpdatedAt == (time.Time{}).Format("2006-01-02 15:04:05") {
 			t.Errorf("Expected updated at to be set, got %s", productResponse.Item.UpdatedAt)
 		}
-	},
-	)
+	})
 }
 
 func TestProductsResponseToDTO(t *testing.T) {
@@ -164,6 +160,5 @@ func TestProductsResponseToDTO(t *testing.T) {
 		if productsResponse.Items[1].Name != product2.Name {
 			t.Errorf("Expected product name to be %s, got %s", product2.Name, productsResponse.Items[1].Name)
 		}
-	},
-	)
+	})
 }

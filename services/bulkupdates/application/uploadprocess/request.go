@@ -6,7 +6,7 @@ import (
 )
 
 type UploadProcessRequestDTO struct {
-	UploadID string
+	UploadID string `validate:"required"`
 }
 
 func (request *UploadProcessRequestDTO) toEntity() *domain.UploadMetadata {

@@ -22,6 +22,10 @@ func (es *errorService) GetValidationError(status int, validationErrors map[stri
 		errorMessage += key + ": " + value + ","
 	}
 
+	if validationErrors == nil {
+		errorMessage = "kindly check your request and try again"
+	}
+
 	errorDetails := &errorDetail{
 		ErrorMessage: strings.TrimRight(errorMessage, ","),
 	}

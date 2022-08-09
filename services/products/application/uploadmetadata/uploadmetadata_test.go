@@ -10,7 +10,7 @@ import (
 )
 
 // ============================= Test request.go
-func TestValidUploadMetadataDTOtoEntity(t *testing.T) {
+func TestUploadMetadataDTOtoEntity(t *testing.T) {
 	t.Run("Test toEntity() method", func(t *testing.T) {
 		request := UploadMetadataDTO{
 			FileName: "test.csv",
@@ -29,8 +29,7 @@ func TestValidUploadMetadataDTOtoEntity(t *testing.T) {
 		if uploadMetadata.ProcessedStatus != domain.UploadStatusUploaded {
 			t.Errorf("Expected ProcessedStatus to be %d, got %d", domain.UploadStatusUploaded, uploadMetadata.ProcessedStatus)
 		}
-	},
-	)
+	})
 }
 
 // ============================= Test service.go
@@ -68,56 +67,64 @@ func TestUploadResponseToDTO(t *testing.T) {
 			t.Errorf("Expected ProcessingStatus to be New Upload, got %s", uploadResponse.Item.ProcessingStatus)
 		}
 
-	},
-	)
+	})
 }
 
 func TestUploadDetailSetStatusText(t *testing.T) {
-	t.Run("Test setStatusText() method", func(t *testing.T) {
-		uploadDetail := &uploadDetailDTO{}
+	uploadDetail := &uploadDetailDTO{}
 
-		// UploadStatusUploaded
-		uploadMetdata := &domain.UploadMetadata{
-			ProcessedStatus: domain.UploadStatusUploaded,
-		}
-		uploadDetail.setStatusText(uploadMetdata)
+	// UploadStatusUploaded
+	uploadMetdata := &domain.UploadMetadata{
+		ProcessedStatus: domain.UploadStatusUploaded,
+	}
+	uploadDetail.setStatusText(uploadMetdata)
+
+	t.Run("Test setStatusText() method - UploadStatusUploaded", func(t *testing.T) {
 
 		if uploadDetail.ProcessingStatus != "New Upload" {
 			t.Errorf("Expected ProcessingStatus to be New Upload, got %s", uploadDetail.ProcessingStatus)
 		}
 
-		// UploadStatusProcessing
+	})
+
+	// UploadStatusProcessing
+	t.Run("Test setStatusText() method - UploadStatusProcessing", func(t *testing.T) {
 		uploadMetdata.ProcessedStatus = domain.UploadStatusProcessing
 		uploadDetail.setStatusText(uploadMetdata)
 
 		if uploadDetail.ProcessingStatus != "Processing" {
 			t.Errorf("Expected ProcessingStatus to be Processing, got %s", uploadDetail.ProcessingStatus)
 		}
+	})
 
-		// UploadStatusProcessingAborted
+	// UploadStatusProcessingAborted
+	t.Run("Test setStatusText() method - UploadStatusProcessingAborted", func(t *testing.T) {
 		uploadMetdata.ProcessedStatus = domain.UploadStatusProcessingAborted
 		uploadDetail.setStatusText(uploadMetdata)
 
 		if uploadDetail.ProcessingStatus != "Processing Aborted" {
 			t.Errorf("Expected ProcessingStatus to be Processing Aborted, got %s", uploadDetail.ProcessingStatus)
 		}
+	})
 
-		// UploadStatusProcessed
+	// UploadStatusProcessed
+	t.Run("Test setStatusText() method - UploadStatusProcessed", func(t *testing.T) {
 		uploadMetdata.ProcessedStatus = domain.UploadStatusProcessed
 		uploadDetail.setStatusText(uploadMetdata)
 
 		if uploadDetail.ProcessingStatus != "Processed" {
 			t.Errorf("Expected ProcessingStatus to be Processed, got %s", uploadDetail.ProcessingStatus)
 		}
+	})
 
-		// Unknown status
+	// Unknown status
+	t.Run("Test setStatusText() method - Unknown Status", func(t *testing.T) {
 		uploadMetdata.ProcessedStatus = 77
 		uploadDetail.setStatusText(uploadMetdata)
 
 		if uploadDetail.ProcessingStatus != "Unknown Status" {
 			t.Errorf("Expected ProcessingStatus to be Unknown Status, got %s", uploadDetail.ProcessingStatus)
 		}
-	},
-	)
+	})
 
 }

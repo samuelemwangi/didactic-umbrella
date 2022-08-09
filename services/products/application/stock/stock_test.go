@@ -30,12 +30,12 @@ func TestConsumeStockRequestDTOtoEntity(t *testing.T) {
 		if stock.CountryID != 1 {
 			t.Errorf("Expected CountryID to be 1, got %d", stock.CountryID)
 		}
-	},
-	)
+	})
 }
 
-func TestInvalidConsumeStockRequestDTOValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with an invalid request", func(t *testing.T) {
+func TestConsumeStockRequestDTOValidateRequest(t *testing.T) {
+	// Invalid request
+	t.Run("Test validateRequest() method - Invalid request", func(t *testing.T) {
 		request := ConsumeStockRequestDTO{
 			Quantity: -90,
 		}
@@ -54,12 +54,10 @@ func TestInvalidConsumeStockRequestDTOValidateRequest(t *testing.T) {
 		if errors["CountryID"] != "required" {
 			t.Errorf("Expected error message to be required, got %s", errors["CountryID"])
 		}
-	},
-	)
-}
+	})
 
-func TestValidConsumeStockRequestDTOValidateRequest(t *testing.T) {
-	t.Run("Test validateRequest() method with a valid request", func(t *testing.T) {
+	// Valid request
+	t.Run("Test validateRequest() method - Valid request", func(t *testing.T) {
 		request := ConsumeStockRequestDTO{
 			ProductID: 1,
 			Quantity:  1,
@@ -70,8 +68,7 @@ func TestValidConsumeStockRequestDTOValidateRequest(t *testing.T) {
 		if len(errors) != 0 {
 			t.Errorf("Expected 0 error, got %d", len(errors))
 		}
-	},
-	)
+	})
 }
 
 // ============================= Test service.go
@@ -106,6 +103,5 @@ func TestStockResponseToDTO(t *testing.T) {
 		if consumeStockResponse.Item.CountryID != stock.CountryID {
 			t.Errorf("Expected CountryID to be %d, got %d", stock.CountryID, consumeStockResponse.Item.CountryID)
 		}
-	},
-	)
+	})
 }
