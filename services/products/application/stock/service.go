@@ -3,7 +3,6 @@ package stock
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
@@ -60,9 +59,6 @@ func (service *stockService) ConsumeStock(request *ConsumeStockRequestDTO) (*Con
 	// update stock count
 	stock.Quantity = stock.Quantity - request.Quantity
 	updateError := service.stockRepo.UpdateStock(stock)
-
-	log.Println("stock available: " + fmt.Sprint(stock.Quantity))
-	log.Println("stock consumed: " + fmt.Sprint(request.Quantity))
 
 	if updateError != nil {
 		return nil, service.errorService.GetGeneralError(http.StatusInternalServerError, updateError)
