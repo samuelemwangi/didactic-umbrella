@@ -22,6 +22,10 @@ func (es *errorService) GetValidationError(status int, validationErrors map[stri
 		errorMessage += key + ": " + value + ","
 	}
 
+	if validationErrors == nil {
+		errorMessage = "kindly check your request and try again"
+	}
+
 	errorDetails := &errorDetail{
 		ErrorMessage: strings.TrimRight(errorMessage, ","),
 	}
@@ -34,8 +38,12 @@ func (es *errorService) GetValidationError(status int, validationErrors map[stri
 }
 
 func (es *errorService) GetGeneralError(status int, err error) *ErrorResponseDTO {
+	errorMessage := "a system error has occurred"
+	if err != nil {
+		errorMessage = err.Error()
+	}
 	errorDetails := &errorDetail{
-		ErrorMessage: err.Error(),
+		ErrorMessage: errorMessage,
 	}
 
 	return &ErrorResponseDTO{

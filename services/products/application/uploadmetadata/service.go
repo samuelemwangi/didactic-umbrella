@@ -40,7 +40,7 @@ func (service *uploadMetadataService) SaveUploadMetadaData(request *UploadMetada
 	}
 
 	response := UploadResponseDTO{}
-	response.toResponseDTO(uploadMetadata)
+	response.toUploadResponseDTO(uploadMetadata)
 
 	service.kafkaProducer.ProduceMessage(service.fileIdTopic, request.UploadID)
 
