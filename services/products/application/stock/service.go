@@ -36,10 +36,8 @@ func (service *stockService) ConsumeStock(request *ConsumeStockRequestDTO) (*Con
 		return nil, service.errorService.GetValidationError(http.StatusBadRequest, validationErrors)
 	}
 
-	stock := request.toEntity()
-
 	// validate stock item exists
-	dbError := service.stockRepo.GetStockByProductAndCountry(stock)
+	stock, dbError := service.stockRepo.GetStockByProductAndCountry(request.CountryID, request.ProductID)
 
 	if dbError != nil {
 		status := http.StatusInternalServerError

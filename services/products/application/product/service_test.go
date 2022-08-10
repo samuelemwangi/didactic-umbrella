@@ -10,14 +10,14 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/errorhelper"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/mock/mock_persistence"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/mock/persistence_mock"
 )
 
 func TestGetProductBySKU(t *testing.T) {
 
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-	mockRepos := mock_persistence.NewMockRepositories(mockCtrl)
+	mockRepos := persistence_mock.NewMockRepositories(mockCtrl)
 
 	productService := &productService{
 		productRepo:  mockRepos.ProductRepo,
@@ -27,11 +27,15 @@ func TestGetProductBySKU(t *testing.T) {
 	// Get Product By SKU
 	t.Run("Test GetProductBySKU() - valid request returns valid product response", func(t *testing.T) {
 
-		product := &domain.Product{
-			SKU: "123H",
-		}
+		productSKU := "123H"
 
-		mockRepos.ProductRepo.EXPECT().GetProductBySKU(product).Return(nil)
+		product := &domain.Product{
+			SKU:  "123H",
+			Name: "Product 1",
+		}
+		product.ID = 1
+
+		mockRepos.ProductRepo.EXPECT().GetProductBySKU(productSKU).Return(product, nil)
 
 		productRequest := &ProductRequestDTO{
 			SKU: "123H",
@@ -80,16 +84,42 @@ func TestGetProductBySKU(t *testing.T) {
 
 	})
 
-	t.Run("Test GetProductBySKU() -  db error  returns error response", func(t *testing.T) {
+	// Get product by SKU - gives a record not found error
+	t.Run("Test GetProductBySKU() -  db error record not found returns a not found error response", func(t *testing.T) {
 
-		product := &domain.Product{
-			SKU: "123H",
-		}
+		productSKU := "NotFound123H"
 
-		mockRepos.ProductRepo.EXPECT().GetProductBySKU(product).Return(errors.New("db error"))
+		mockRepos.ProductRepo.EXPECT().GetProductBySKU(productSKU).Return(nil, gorm.ErrRecordNotFound)
 
 		productRequest := &ProductRequestDTO{
-			SKU: "123H",
+			SKU: productSKU,
+		}
+
+		productResponse, errResponse := productService.GetProductBySKU(productRequest)
+
+		if productResponse != nil {
+			t.Errorf("Expected product to be nil, got %v", productResponse)
+		}
+
+		if errResponse == nil {
+			t.Errorf("Expected error, got nil")
+		}
+
+		if errResponse != nil && errResponse.Status != http.StatusNotFound {
+			t.Errorf("Expected status %d, got %d", http.StatusNotFound, errResponse.Status)
+		}
+
+	})
+
+	//Get product by SKU gives a DB error
+	t.Run("Test GetProductBySKU() -  db error  returns error response", func(t *testing.T) {
+
+		productSKU := "HasError123H"
+
+		mockRepos.ProductRepo.EXPECT().GetProductBySKU(productSKU).Return(nil, errors.New("db error"))
+
+		productRequest := &ProductRequestDTO{
+			SKU: productSKU,
 		}
 
 		productResponse, errResponse := productService.GetProductBySKU(productRequest)
@@ -108,46 +138,20 @@ func TestGetProductBySKU(t *testing.T) {
 
 	})
 
-	t.Run("Test GetProductBySKU() -  db error record not found returns a not found error response", func(t *testing.T) {
-
-		product := &domain.Product{
-			SKU: "123H",
-		}
-
-		mockRepos.ProductRepo.EXPECT().GetProductBySKU(product).Return(gorm.ErrRecordNotFound)
-
-		productRequest := &ProductRequestDTO{
-			SKU: "123H",
-		}
-
-		productResponse, errResponse := productService.GetProductBySKU(productRequest)
-
-		if productResponse != nil {
-			t.Errorf("Expected product to be nil, got %v", productResponse)
-		}
-
-		if errResponse == nil {
-			t.Errorf("Expected error, got nil")
-		}
-
-		if errResponse != nil && errResponse.Status != http.StatusNotFound {
-			t.Errorf("Expected status %d, got %d", http.StatusNotFound, errResponse.Status)
-		}
-
-	})
 }
 
 func TestGetProducts(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockRepos := mock_persistence.NewMockRepositories(mockCtrl)
+	mockRepos := persistence_mock.NewMockRepositories(mockCtrl)
 
 	productService := &productService{
 		productRepo:  mockRepos.ProductRepo,
 		errorService: errorhelper.NewErrorService(),
 	}
 
+	// Get All Products  when there is products in the db
 	t.Run("Test GetProducts() - products > 0 returns all products", func(t *testing.T) {
 		products := []*domain.Product{
 			{
@@ -179,6 +183,7 @@ func TestGetProducts(t *testing.T) {
 		}
 	})
 
+	// Get All Products  when there is no products in the db
 	t.Run("Test GetProducts() - products count = 0 returns empty response", func(t *testing.T) {
 		products := []*domain.Product{}
 
@@ -203,6 +208,7 @@ func TestGetProducts(t *testing.T) {
 		}
 	})
 
+	// Get All Products  when there is a db error
 	t.Run("Test GetProducts() - error getting products returns error response", func(t *testing.T) {
 		mockRepos.ProductRepo.EXPECT().GetProducts().Return(nil, errors.New("error getting products"))
 

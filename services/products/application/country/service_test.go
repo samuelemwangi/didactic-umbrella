@@ -9,14 +9,14 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application/errorhelper"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/domain"
-	"github.com/samuelemwangi/jumia-mds-test/services/products/mock/mock_persistence"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/mock/persistence_mock"
 )
 
 func TestSaveCountry(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockRepos := mock_persistence.NewMockRepositories(mockCtrl)
+	mockRepos := persistence_mock.NewMockRepositories(mockCtrl)
 
 	countryService := &countryService{
 		countryRepo:  mockRepos.CountryRepo,
@@ -83,7 +83,7 @@ func TestSaveCountry(t *testing.T) {
 func TestGetCountries(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-	mockRepos := mock_persistence.NewMockRepositories(mockCtrl)
+	mockRepos := persistence_mock.NewMockRepositories(mockCtrl)
 	mockedCountries := []*domain.Country{
 		{
 			Code: "KE",
