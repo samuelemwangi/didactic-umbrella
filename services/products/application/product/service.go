@@ -36,8 +36,7 @@ func (service *productService) GetProductBySKU(request *ProductRequestDTO) (*Pro
 	}
 
 	// get item
-	product := request.toEntity()
-	dbError := service.productRepo.GetProductBySKU(product)
+	product, dbError := service.productRepo.GetProductBySKU(request.SKU)
 
 	// handle errors
 	if dbError != nil {

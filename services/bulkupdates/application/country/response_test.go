@@ -6,9 +6,6 @@ import (
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 )
 
-// ================================= Test service.go =================================
-
-// ================================= Test response.go =================================
 func TestCountryResponseToDTO(t *testing.T) {
 	t.Run("Test toDTO() method", func(t *testing.T) {
 		country := &domain.Country{

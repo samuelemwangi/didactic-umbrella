@@ -6,7 +6,7 @@ import (
 )
 
 type StockRepository interface {
-	GetStockByProductAndCountry(*domain.Stock) error
+	GetStockByProductAndCountry(uint, uint) (*domain.Stock, error)
 	SaveStock(*domain.Stock) error
 	UpdateStock(*domain.Stock) error
 }
@@ -21,9 +21,10 @@ func NewStockRepository(db *gorm.DB) *stockRepository {
 	}
 }
 
-func (repo *stockRepository) GetStockByProductAndCountry(stock *domain.Stock) error {
+func (repo *stockRepository) GetStockByProductAndCountry(countryId uint, productId uint) (*domain.Stock, error) {
+	stock := &domain.Stock{}
 	result := repo.db.Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Take(stock)
-	return result.Error
+	return stock, result.Error
 }
 
 func (repo *stockRepository) SaveStock(stock *domain.Stock) error {

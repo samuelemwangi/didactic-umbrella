@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-// ============================= Test service.go
-
 func TestErrorServiceGetValidationError(t *testing.T) {
 	errorService := NewErrorService()
 

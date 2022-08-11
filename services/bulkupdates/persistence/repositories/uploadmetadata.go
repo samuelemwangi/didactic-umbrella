@@ -6,7 +6,7 @@ import (
 )
 
 type UploadMetadataRepository interface {
-	GetUploadByUploadId(*domain.UploadMetadata) error
+	GetUploadByUploadId(string) (*domain.UploadMetadata, error)
 	UpdateUploadStatus(*domain.UploadMetadata) error
 }
 
@@ -20,9 +20,10 @@ func NewUploadMetadataRepository(db *gorm.DB) *uploadMetadataRepository {
 	}
 }
 
-func (repo *uploadMetadataRepository) GetUploadByUploadId(upload *domain.UploadMetadata) error {
+func (repo *uploadMetadataRepository) GetUploadByUploadId(uploadID string) (*domain.UploadMetadata, error) {
+	upload := &domain.UploadMetadata{}
 	result := repo.db.First(upload, "upload_id = ?", upload.UploadID)
-	return result.Error
+	return upload, result.Error
 
 }
 

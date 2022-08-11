@@ -51,8 +51,7 @@ func (service *uploadProcessorService) GetProcessingStatus(requesst *UploadProce
 		return nil, service.errorService.GetValidationError(http.StatusBadRequest, validationErrors)
 	}
 
-	uploadMetadata := requesst.toEntity()
-	dbError := service.uploadMetdataRepo.GetUploadByUploadId(uploadMetadata)
+	uploadMetadata, dbError := service.uploadMetdataRepo.GetUploadByUploadId(requesst.UploadID)
 
 	// handle errors
 	if dbError != nil {
@@ -70,16 +69,14 @@ func (service *uploadProcessorService) GetProcessingStatus(requesst *UploadProce
 }
 
 func (service *uploadProcessorService) ProcessUpload(filePath, uploadId string) error {
-	// assign upload id to upload metadata
-	service.uploadMetadata.UploadID = uploadId
-	// ensure this is zero when reading to avoid filtering by this value
-	service.uploadMetadata.ID = 0
 
 	// check if upload has been processed
-	err := service.uploadMetdataRepo.GetUploadByUploadId(service.uploadMetadata)
+	uploadMetadata, err := service.uploadMetdataRepo.GetUploadByUploadId(uploadId)
 	if err != nil {
 		return err
 	}
+
+	service.uploadMetadata = uploadMetadata
 
 	if service.uploadMetadata.ProcessedStatus == domain.UploadStatusProcessed {
 		return errors.New("upload has already been processed")
