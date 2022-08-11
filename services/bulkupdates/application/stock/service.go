@@ -1,7 +1,6 @@
 package stock
 
 import (
-	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/domain"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/bulkupdates/persistence/repositories"
 	"gorm.io/gorm"
@@ -23,11 +22,8 @@ func NewStockService(repos *persistence.Repositories) *stockService {
 
 func (service *stockService) SaveStock(countryId uint, productId uint, quantity int) error {
 	// Get stock
-	stock := &domain.Stock{
-		CountryID: countryId,
-		ProductID: productId,
-	}
-	err := service.stockRepo.GetStockByProductAndCountry(stock)
+
+	stock, err := service.stockRepo.GetStockByProductAndCountry(countryId, productId)
 
 	if err != nil && err.Error() != gorm.ErrRecordNotFound.Error() {
 		return err
@@ -36,6 +32,8 @@ func (service *stockService) SaveStock(countryId uint, productId uint, quantity 
 	// if no stock found, create new one
 	if err != nil && err.Error() == gorm.ErrRecordNotFound.Error() {
 
+		stock.CountryID = countryId
+		stock.ProductID = productId
 		stock.Quantity = quantity
 
 		if stock.Quantity < 0 {

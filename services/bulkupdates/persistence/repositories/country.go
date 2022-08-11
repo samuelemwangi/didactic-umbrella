@@ -6,7 +6,7 @@ import (
 )
 
 type CountryRepository interface {
-	GetCountryByCode(*domain.Country) error
+	GetCountryByCode(string) (*domain.Country, error)
 	SaveCountry(*domain.Country) error
 }
 
@@ -20,9 +20,10 @@ func NewCountryRepository(db *gorm.DB) *countryRepository {
 	}
 }
 
-func (repo *countryRepository) GetCountryByCode(country *domain.Country) error {
+func (repo *countryRepository) GetCountryByCode(countryCode string) (*domain.Country, error) {
+	country := &domain.Country{}
 	result := repo.db.First(country, "code = ?", country.Code)
-	return result.Error
+	return country, result.Error
 }
 
 func (repo *countryRepository) SaveCountry(country *domain.Country) error {
