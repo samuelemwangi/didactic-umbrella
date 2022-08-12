@@ -51,7 +51,7 @@ func TestSaveProduct(t *testing.T) {
 
 	})
 
-	t.Run("Test SaveProduct() -  Non-existent record returns a valid response", func(t *testing.T) {
+	t.Run("Test SaveProduct() method -  Non-existent record returns a valid response", func(t *testing.T) {
 		productName := "Sample Product"
 		productSKU := "123"
 
@@ -78,7 +78,7 @@ func TestSaveProduct(t *testing.T) {
 
 	})
 
-	t.Run("Test SaveProduct() -  DB Error when getting record returns an error response", func(t *testing.T) {
+	t.Run("Test SaveProduct() method -  DB Error when getting record returns an error response", func(t *testing.T) {
 
 		productSKU := "123"
 		productName := "Sample Product"
@@ -95,7 +95,7 @@ func TestSaveProduct(t *testing.T) {
 		}
 	})
 
-	t.Run("Test SaveProduct() -  DB Error when saving record returns an error response", func(t *testing.T) {
+	t.Run("Test SaveProduct() method -  DB Error when saving record returns an error response", func(t *testing.T) {
 
 		productSKU := "123"
 		productName := "Sample Product"
