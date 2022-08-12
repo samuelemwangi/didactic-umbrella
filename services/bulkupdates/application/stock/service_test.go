@@ -21,7 +21,7 @@ func TestSaveStock(t *testing.T) {
 		stockRepo: mockRepos.StockRepo,
 	}
 
-	t.Run("Test SaveStock() - Updating existing stock returns a valid response", func(t *testing.T) {
+	t.Run("Test SaveStock() method - Updating existing stock returns a valid response", func(t *testing.T) {
 
 		var countryID uint = 1
 		var productID uint = 2
@@ -50,7 +50,7 @@ func TestSaveStock(t *testing.T) {
 
 	})
 
-	t.Run("Test SaveStock() - Saving a non-existent stock returns a valid response", func(t *testing.T) {
+	t.Run("Test SaveStock() method - Saving a non-existent stock returns a valid response", func(t *testing.T) {
 		var countryID uint = 1
 		var productID uint = 2
 
@@ -73,7 +73,7 @@ func TestSaveStock(t *testing.T) {
 		}
 	})
 
-	t.Run("Test SaveStock() - Db error when getting stock returns an error response", func(t *testing.T) {
+	t.Run("Test SaveStock() method - Db error when getting stock returns an error response", func(t *testing.T) {
 		var countryID uint = 1
 		var productID uint = 2
 
@@ -91,7 +91,7 @@ func TestSaveStock(t *testing.T) {
 
 	})
 
-	t.Run("Test SaveStock() - Db error when updating stock returns an error response", func(t *testing.T) {
+	t.Run("Test SaveStock() method - Db error when updating stock returns an error response", func(t *testing.T) {
 
 		var countryID uint = 1
 		var productID uint = 2
@@ -120,7 +120,7 @@ func TestSaveStock(t *testing.T) {
 
 	})
 
-	t.Run("Test SaveStock() - Db error when saving stock returns an error response", func(t *testing.T) {
+	t.Run("Test SaveStock() method - Db error when saving stock returns an error response", func(t *testing.T) {
 
 		var countryID uint = 1
 		var productID uint = 2

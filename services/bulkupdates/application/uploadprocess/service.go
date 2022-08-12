@@ -68,7 +68,7 @@ func (service *uploadProcessorService) GetProcessingStatus(requesst *UploadProce
 	return &responseDTO, nil
 }
 
-func (service *uploadProcessorService) ProcessUpload(filePath, uploadId string) error {
+func (service *uploadProcessorService) ProcessUpload(filePath string, uploadId string) error {
 
 	// check if upload has been processed
 	uploadMetadata, err := service.uploadMetdataRepo.GetUploadByUploadId(uploadId)
