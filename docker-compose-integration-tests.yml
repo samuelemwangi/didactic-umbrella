@@ -1,0 +1,77 @@
+version: '3.7'
+
+services:
+  zookeeper-1:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - "./integration-cluster-mounts/zookeeper-1/data:/var/lib/zookeeper/data"
+      - "./integration-cluster-mounts/zookeeper-1/logs:/var/lib/zookeeper/log"
+    networks:
+      - services_network
+    restart: on-failure
+
+  kafka-1:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper-1
+    container_name: kafka-1
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - 29093:29093
+    volumes:
+      - "./integration-cluster-mounts/kafka-1/data:/var/lib/kafka/data"
+    networks:
+      - services_network
+    restart: on-failure
+
+  init-kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - kafka-1
+    container_name: init-kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka-1:9092 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka-1:9092 --create --if-not-exists --topic file-process-topic --replication-factor 1 --partitions 1
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka-1:9092 --list
+      "
+    networks:
+      - services_network
+    restart: on-failure
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jumia-mds-test
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: testP@ssw0rd
+    ports:
+      - 3308:3306
+    volumes:
+      - "./integration-cluster-mounts/mysql-db/data:/var/lib/mysql"
+    networks:
+      - services_network
+    restart: on-failure
+
+networks:
+  services_network:
+    name: internal_services_network
+    driver: bridge

@@ -22,7 +22,7 @@ func NewUploadMetadataRepository(db *gorm.DB) *uploadMetadataRepository {
 
 func (repo *uploadMetadataRepository) GetUploadByUploadId(uploadID string) (*domain.UploadMetadata, error) {
 	upload := &domain.UploadMetadata{}
-	result := repo.db.First(upload, "upload_id = ?", upload.UploadID)
+	result := repo.db.First(upload, "upload_id = ?", uploadID)
 	return upload, result.Error
 
 }

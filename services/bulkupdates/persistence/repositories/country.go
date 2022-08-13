@@ -22,7 +22,7 @@ func NewCountryRepository(db *gorm.DB) *countryRepository {
 
 func (repo *countryRepository) GetCountryByCode(countryCode string) (*domain.Country, error) {
 	country := &domain.Country{}
-	result := repo.db.First(country, "code = ?", country.Code)
+	result := repo.db.First(country, "code = ?", countryCode)
 	return country, result.Error
 }
 

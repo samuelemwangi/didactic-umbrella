@@ -23,7 +23,7 @@ func NewStockRepository(db *gorm.DB) *stockRepository {
 
 func (repo *stockRepository) GetStockByProductAndCountry(countryId uint, productId uint) (*domain.Stock, error) {
 	stock := &domain.Stock{}
-	result := repo.db.Where("country_id = ? AND product_id = ?", stock.CountryID, stock.ProductID).Take(stock)
+	result := repo.db.Where("country_id = ? AND product_id = ?", countryId, productId).Take(stock)
 	return stock, result.Error
 }
 
