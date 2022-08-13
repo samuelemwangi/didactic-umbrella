@@ -22,7 +22,7 @@ func NewProductRepository(db *gorm.DB) *productRepository {
 
 func (repo *productRepository) GetProductBySKU(productSKU string) (*domain.Product, error) {
 	product := &domain.Product{}
-	result := repo.db.First(product, "sku = ?", product.SKU)
+	result := repo.db.First(product, "sku = ?", productSKU)
 	return product, result.Error
 }
 
