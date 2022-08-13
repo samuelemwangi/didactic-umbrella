@@ -22,4 +22,6 @@ go.work
 .env
 mounts/
 uploads/
+test-uploads/
 cluster-mounts/
+integration-cluster-mounts/

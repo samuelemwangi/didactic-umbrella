@@ -21,6 +21,6 @@ func NewUploadMetadataRepository(db *gorm.DB) *uploadMetadataRepository {
 
 func (repo *uploadMetadataRepository) SaveUploadMetaData(uploadMetadata *domain.UploadMetadata) error {
 
-	result := repo.db.Debug().Create(uploadMetadata)
+	result := repo.db.Create(uploadMetadata)
 	return result.Error
 }
