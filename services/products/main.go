@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/application"
+	"github.com/samuelemwangi/jumia-mds-test/services/products/infrastructure/logging"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/persistence"
 	"github.com/samuelemwangi/jumia-mds-test/services/products/presentation"
 )
@@ -22,9 +23,16 @@ func main() {
 	db := persistence.OpenDBConnection()
 	defer db.Close()
 
+	logger := logging.SetUpLogger()
+	defer logger.Sync()
+
 	// wire repositories
 	repos := persistence.NewRepositories(db)
+
+	// wire services
 	services := application.NewServices(repos)
+
+	// wire handlers
 	handlers := presentation.NewHandlers(services)
 
 	// routes
@@ -42,6 +50,7 @@ func main() {
 
 		v1.POST("/upload", handlers.UploadHandler.UploadCSVFile)
 	}
+	logger.Info("starting server")
 
 	// run app
 	r.Run(":8085")
