@@ -1,4 +1,3 @@
-## MDS Test
 ### Summary
 A system that helps in managing products for a hypothetical ecommerce  platform. A product should have a unique SKU and could be commercialized in
 multiple countries. Each product can then have different stock per country.
